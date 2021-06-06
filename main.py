@@ -49,27 +49,9 @@ def main():
             if pygame.key.get_pressed()[pygame.K_KP_MINUS] and size != 0:
                 size-=1 
             if pygame.mouse.get_pressed() == (1,0,0):
-                # for i in range(len(colors)):
-                    # if color_button[i].collidepoint(pos):
-                    #     color = colors[i]
-                if text_rect.collidepoint(pos):
-                    pygame.draw.rect(display, white, pygame.Rect(0,20,display_size[0],display_size[1]))
-                if color_button[0].collidepoint(pos):
-                    pen_color = colors[0]
-                if color_button[1].collidepoint(pos):
-                    pen_color = colors[1]
-                if color_button[2].collidepoint(pos):
-                    pen_color = colors[2]
-                if color_button[3].collidepoint(pos):
-                    pen_color = colors[3]
-                if color_button[4].collidepoint(pos):
-                    pen_color = colors[4]
-                if color_button[5].collidepoint(pos):
-                    pen_color = colors[5]
-                if color_button[6].collidepoint(pos):
-                    pen_color = colors[6]
-                if color_button[7].collidepoint(pos):
-                    pen_color = colors[7]
+                for i in range(len(colors)):
+                    if color_button[i].collidepoint(pos):
+                        color = colors[i]
                 if (pos[1]-size//2) > 20:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
 
