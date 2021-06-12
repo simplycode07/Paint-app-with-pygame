@@ -9,7 +9,6 @@ To be honest nothing much
 - You can Save images you have created 
 - And nothing much
 - but it comes with a color palette with 7 colors and a random color which is generated when program starts
-- Export documents as Markdown, HTML and PDF
 
 ## Tech
 - Python
