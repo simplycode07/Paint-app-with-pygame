@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import random
+from datetime import datetime
 
 pygame.init()
 
@@ -28,6 +29,15 @@ text_rect = text.get_rect()
 text_rect.center = (900, 10)
 display.fill(white)
 
+def save_image():
+    w = display_size[0]-50
+    h = display_size[1]-20
+    rect = pygame.Rect(50,20,w,h)
+    sub = display.subsurface(rect)
+    screenshot = pygame.Surface((w,h))
+    screenshot.blit(sub,(0,0))
+    return screenshot
+
 def main():
     size = 25
     pen_color = (255,255,0)
@@ -40,23 +50,32 @@ def main():
     while True:
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
+            keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
                 print("closing")
                 pygame.quit()
                 break
-            if pygame.key.get_pressed()[pygame.K_KP_PLUS] and size < 200:
+            if keys[pygame.K_KP_PLUS] and size < 200:
                 size+=1
-            if pygame.key.get_pressed()[pygame.K_KP_MINUS] and size != 0:
+            if keys[pygame.K_KP_MINUS] and size != 0:
                 size-=1 
+            if (keys[pygame.K_LCTRL] and keys[pygame.K_s]) or (keys[pygame.K_RCTRL] and keys[pygame.K_s]):
+                image = save_image()
+                date = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
+                pygame.image.save(image, f"{date.lower()}-image.jpg")
+
             if pygame.mouse.get_pressed() == (1,0,0):
-                for i in range(len(colors)):
+                 for i in range(len(colors)):
                     if color_button[i].collidepoint(pos):
                         color = colors[i]
-                if (pos[1]-size//2) > 20:
+                if text_rect.collidepoint(pos):
+                    pygame.draw.rect(display, white, pygame.Rect(0,20,display_size[0],display_size[1]))
+                
+                if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 50:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
 
             if pygame.mouse.get_pressed() == (0,0,1):
-                if (pos[1]-size//2) > 20:
+                if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 50:
                     pygame.draw.rect(display, eraser_color, pygame.Rect(((pos[0]-size//2), (pos[1]-size//2), size, size)))
     
         pygame.display.update()
