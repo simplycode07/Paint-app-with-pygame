@@ -8,7 +8,7 @@ pygame.init()
 # basic initialisation stuff
 display_size = (1000,650)
 display = pygame.display.set_mode(display_size)
-pygame.display.set_caption("Paint")
+pygame.display.set_caption("Painting App with pygame")
 clock = pygame.time.Clock()
 font = pygame.font.Font("C:\Windows\Fonts\Arial.ttf", 18)
 
@@ -70,7 +70,7 @@ def main():
                         color = colors[i]
                 if text_rect.collidepoint(pos):
                     pygame.draw.rect(display, white, pygame.Rect(0,20,display_size[0],display_size[1]))
-                
+
                 if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 50:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
 
