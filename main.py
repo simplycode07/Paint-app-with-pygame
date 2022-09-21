@@ -53,7 +53,7 @@ def main():
     for i in range(len(colors)):
         color_button.append(pygame.Rect((5+15*i), 10, 10,10))
         pygame.draw.rect(display, colors[i], pygame.Rect((5+15*i), 10, 10,10))
-    
+
     square_rect = pygame.Rect(5,35, 10,10)
     pygame.draw.rect(display, (200,200,200), square_rect)
     while True:
@@ -63,16 +63,16 @@ def main():
             if event.type == pygame.QUIT:
                 print("closing")
                 quit()
-                
+
             if square_selected:
                 if pygame.mouse.get_pressed() == (1,0,0) and click_num != 2:
                     click_num += 1
                     rect_pos = rect_pos.append(pos)
-                    
+
             if keys[pygame.K_KP_PLUS] and size < 200:
                 size+=1
             if keys[pygame.K_KP_MINUS] and size != 0:
-                size-=1 
+                size-=1
             if (keys[pygame.K_LCTRL] and keys[pygame.K_s]) or (keys[pygame.K_RCTRL] and keys[pygame.K_s]):
                 image = save_image()
                 date = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
@@ -104,7 +104,6 @@ def main():
                 if square_rect.collidepoint(pos):
                     print("square pressed")
                     square_selected = True
-                    time.sleep(1)
 
                 if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 50:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
@@ -112,7 +111,7 @@ def main():
             if pygame.mouse.get_pressed() == (0,0,1):
                 if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 50:
                     pygame.draw.rect(display, eraser_color, pygame.Rect(((pos[0]-size//2), (pos[1]-size//2), size, size)))
-    
+
         pygame.display.update()
         clock.tick(240)
 
