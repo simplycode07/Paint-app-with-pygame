@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 
 pygame.init()
-
+pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
 # basic initialisation stuff
 display_size = (1000,650)
 display = pygame.display.set_mode(display_size)
@@ -79,9 +79,6 @@ def main():
                 pygame.image.save(image, f"{date.lower()}-image.jpg")
 
             if pygame.mouse.get_pressed() == (1,0,0):
-                #  for i in range(len(colors)):
-                #     if color_button[i].collidepoint(pos):
-                #         color = colors[i]
                 if text_rect.collidepoint(pos):
                 	pygame.draw.rect(display, white, pygame.Rect(0,50,display_size[0],display_size[1]))
                 if not square_selected:
