@@ -14,3 +14,6 @@ To be honest nothing much
 ## Tech
 - Python
 - Pygame
+
+## Example image
+- ![smiley face](example img.jpg)

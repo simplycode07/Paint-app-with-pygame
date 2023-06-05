@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
 import random
-import time
 
+from math import sqrt
 from datetime import datetime
 
 pygame.init()
@@ -13,8 +13,6 @@ display = pygame.display.set_mode(display_size)
 pygame.display.set_caption("Painting App with pygame")
 clock = pygame.time.Clock()
 font = pygame.font.Font("C:\\Windows\\Fonts\\Arial.ttf", 18)
-
-square_selected = False
 
 # colors
 colors = {
@@ -35,13 +33,15 @@ clear_butt_rect.center = (900, 10)
 
 square_selected_true = pygame.image.load('img\\square_selected_true.png')
 square_selected_false = pygame.image.load('img\\square_selected_false.png')
+circle_selected_true = pygame.image.load('img\\circle_selected_true.png')
+circle_selected_false = pygame.image.load('img\\circle_selected_false.png')
 
 display.fill(colors["white"])
 
 def save_image():
-    w = display_size[0]-30
-    h = display_size[1]-20
-    rect = pygame.Rect(30, 20, w, h)
+    w = display_size[0]
+    h = display_size[1]-35 #canvas starts from (0,35)
+    rect = pygame.Rect(0, 35, w, h)
     sub = display.subsurface(rect)
     screenshot = pygame.Surface((w, h))
     screenshot.blit(sub, (0, 0))
@@ -71,10 +71,10 @@ def draw_square(first_corner, second_corner):
     return left_x,left_y,w,h
 
 def main():
-    square_selected = False
+    tool_selected = [0,0]
     click_num = 0
     size = 15
-    pen_color = (255, 255, 0)
+    pen_color = colors['black']
     eraser_color = colors['white']
     color_button = []
     rect_pos = []
@@ -88,7 +88,10 @@ def main():
 
     #this draws the square tool, (15,25)
     square_rect = pygame.Rect(15, 25, 10, 10)
+    circle_rect = pygame.Rect(30, 25, 10, 10)
     display.blit(square_selected_false, square_rect)
+    display.blit(circle_selected_false, circle_rect)
+
     while True:
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
@@ -97,26 +100,30 @@ def main():
                 print("closing")
                 quit()
 
-            if square_selected:
-                if pygame.mouse.get_pressed() == (1, 0, 0) and click_num < 2:
+            if True in tool_selected: #drawing with tools
+                if pygame.mouse.get_pressed() == (1, 0, 0) and click_num < 2 and pos[1] > 35:
                     click_num += 1
                     rect_pos.append(pos)
-                    print(rect_pos)
                 
                 if click_num==2:
-                    print(f"drawing square on following points, {rect_pos}")
                     click_num=0
                     first_corner = rect_pos[0] #--> (a,b)
                     second_corner = rect_pos[1] #--> (c,d)
-                    # third_corner = (first_corner[0], second_corner[1]) -->(a,d)
-                    # fourth_corner = (second_corner[0], first_corner[1]) -->(c,b)
-                    left_x, left_y, w, h = draw_square(first_corner, second_corner)
-                    pygame.draw.rect(display, pen_color, pygame.Rect(left_x, left_y, w,h))
+
+                    if tool_selected[0]: # this draws rectangle
+                        left_x, left_y, w, h = draw_square(first_corner, second_corner)
+                        pygame.draw.rect(display, pen_color, pygame.Rect(left_x, left_y, w,h), size)
+
+                    if tool_selected[1]: # this draws circle
+                        center = (((first_corner[0]+second_corner[0])//2), ((first_corner[1]+second_corner[1])//2))#mid point formula basic shit
+                        radius = sqrt((center[0]-first_corner[0])**2 + (center[1]-first_corner[1])**2) # distance formula(pythagoras)
+                        pygame.draw.circle(display, pen_color, center, radius, size)
+
                     rect_pos = []
 
-            if keys[pygame.K_KP_PLUS] and size < 200:
+            if keys[pygame.K_KP_PLUS] and size < 200: #changing size of pen
                 size += 1
-            if keys[pygame.K_KP_MINUS] and size != 0:
+            if keys[pygame.K_KP_MINUS] and size > 5:
                 size -= 1
             if (keys[pygame.K_LCTRL] and keys[pygame.K_s]) or (keys[pygame.K_RCTRL] and keys[pygame.K_s]):
                 image = save_image()
@@ -129,14 +136,19 @@ def main():
                     for i in range(1,len(colors)):
                         pygame.draw.rect(display, colors[colors_keys[i]], pygame.Rect((15*i), 10, 10, 10))
 
-                    square_rect = pygame.Rect(15, 25, 10, 10)
-                    if square_selected:
+                    if tool_selected[0]:
                         display.blit(square_selected_true, square_rect)
                     else:
                         display.blit(square_selected_false, square_rect)
+                    
+                    if tool_selected[1]:
+                        display.blit(circle_selected_true, circle_rect)
+                    else:
+                        display.blit(circle_selected_false, circle_rect)
+
                     display.blit(clear_butt_text, clear_butt_rect)
 
-                if not square_selected: #because if the 
+                if not True in tool_selected:
                     if color_button[0].collidepoint(pos):
                         pen_color = colors['black']
                     elif color_button[1].collidepoint(pos):
@@ -153,17 +165,37 @@ def main():
                         pen_color = colors['purple']
                     elif color_button[7].collidepoint(pos):
                         pen_color = colors['rand_col']
+
                 if square_rect.collidepoint(pos):
-                    print("square pressed")
-                    square_selected = not square_selected
-                    click_num=0
-                    rect_pos=[]                    
-                    if square_selected:
+                    print("click on the diagonally opposite ends of the rectangle you want to draw")                
+                    for i in range(len(tool_selected)):
+                        if i != 0:
+                            tool_selected[i]=0
+                        else:
+                            tool_selected[i] = not tool_selected[i]
+                    click_num = 0
+                    rect_pos = []                    
+                    if tool_selected[0]:
                         display.blit(square_selected_true, square_rect)
                     else:
                         display.blit(square_selected_false, square_rect)
+                    display.blit(circle_selected_false, circle_rect)
+                if circle_rect.collidepoint(pos):
+                    print("click on diametrically opposite points of the circle you want to draw")
+                    for i in range(len(tool_selected)):
+                        if i != 1:
+                            tool_selected[i] = 0
+                        else:
+                            tool_selected[i] = not tool_selected[i]
+                    click_num = 0
+                    rect_pos = []
+                    if tool_selected[1]:
+                        display.blit(circle_selected_true, circle_rect)
+                    else:
+                        display.blit(circle_selected_false, circle_rect)
+                    display.blit(square_selected_false, square_rect)
 
-                if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 30 and not square_selected:
+                if (pos[1]-size//2) > 35 and not True in tool_selected:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
 
             if pygame.mouse.get_pressed() == (0, 0, 1):
