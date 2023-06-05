@@ -29,9 +29,13 @@ colors = {
     "rand_col":(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)),
 }
 
-text = font.render("Clear screen", True, colors["black"], (255, 255, 230))
-clear_butt_rect = text.get_rect()
+clear_butt_text = font.render("Clear screen", True, colors["black"], (255, 255, 230))
+clear_butt_rect = clear_butt_text.get_rect()
 clear_butt_rect.center = (900, 10)
+
+square_selected_true = pygame.image.load('img\\square_selected_true.png')
+square_selected_false = pygame.image.load('img\\square_selected_false.png')
+
 display.fill(colors["white"])
 
 def save_image():
@@ -43,7 +47,7 @@ def save_image():
     screenshot.blit(sub, (0, 0))
     return screenshot
 
-def draw_sqaure(first_corner, second_corner):
+def draw_square(first_corner, second_corner):
     # first_corner = rect_pos[0] --> (a,b)
     # second_corner = rect_pos[1] --> (c,d)
     # third_corner = (first_corner[0], second_corner[1]) -->(a,d)
@@ -74,7 +78,7 @@ def main():
     eraser_color = colors['white']
     color_button = []
     rect_pos = []
-    display.blit(text, clear_butt_rect)
+    display.blit(clear_butt_text, clear_butt_rect)
     colors_keys = [*colors]
 
     #this draws buttons for colors
@@ -82,9 +86,9 @@ def main():
         color_button.append(pygame.Rect(((15*i)), 10, 10, 10))
         pygame.draw.rect(display, colors[colors_keys[i]], pygame.Rect((15*i), 10, 10, 10))
 
-    #this draws the square tool
+    #this draws the square tool, (15,25)
     square_rect = pygame.Rect(15, 25, 10, 10)
-    pygame.draw.rect(display, (200, 200, 200), square_rect)
+    display.blit(square_selected_false, square_rect)
     while True:
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
@@ -106,7 +110,7 @@ def main():
                     second_corner = rect_pos[1] #--> (c,d)
                     # third_corner = (first_corner[0], second_corner[1]) -->(a,d)
                     # fourth_corner = (second_corner[0], first_corner[1]) -->(c,b)
-                    left_x, left_y, w, h = draw_sqaure(first_corner, second_corner)
+                    left_x, left_y, w, h = draw_square(first_corner, second_corner)
                     pygame.draw.rect(display, pen_color, pygame.Rect(left_x, left_y, w,h))
                     rect_pos = []
 
@@ -126,8 +130,11 @@ def main():
                         pygame.draw.rect(display, colors[colors_keys[i]], pygame.Rect((15*i), 10, 10, 10))
 
                     square_rect = pygame.Rect(15, 25, 10, 10)
-                    pygame.draw.rect(display, (200, 200, 200), square_rect)
-                    display.blit(text, clear_butt_rect)
+                    if square_selected:
+                        display.blit(square_selected_true, square_rect)
+                    else:
+                        display.blit(square_selected_false, square_rect)
+                    display.blit(clear_butt_text, clear_butt_rect)
 
                 if not square_selected: #because if the 
                     if color_button[0].collidepoint(pos):
@@ -150,7 +157,11 @@ def main():
                     print("square pressed")
                     square_selected = not square_selected
                     click_num=0
-                    rect_pos=[]
+                    rect_pos=[]                    
+                    if square_selected:
+                        display.blit(square_selected_true, square_rect)
+                    else:
+                        display.blit(square_selected_false, square_rect)
 
                 if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 30 and not square_selected:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
