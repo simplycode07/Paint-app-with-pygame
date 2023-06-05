@@ -120,9 +120,14 @@ def main():
                 pygame.image.save(image, f"{date.lower()}-image.jpg")
 
             if pygame.mouse.get_pressed() == (1, 0, 0):
-                if clear_butt_rect.collidepoint(pos):
-                    #draws a huge white rectangle in order to clear the image drawn by user
-                    pygame.draw.rect(display, colors['white'], pygame.Rect(30, 20, display_size[0], display_size[1]))
+                if clear_butt_rect.collidepoint(pos): #draws a white rectangle all over the screen and then redraws all the buttons
+                    pygame.draw.rect(display, colors['white'], pygame.Rect(0,0, display_size[0], display_size[1]))
+                    for i in range(1,len(colors)):
+                        pygame.draw.rect(display, colors[colors_keys[i]], pygame.Rect((15*i), 10, 10, 10))
+
+                    square_rect = pygame.Rect(15, 25, 10, 10)
+                    pygame.draw.rect(display, (200, 200, 200), square_rect)
+                    display.blit(text, clear_butt_rect)
 
                 if not square_selected: #because if the 
                     if color_button[0].collidepoint(pos):
@@ -144,6 +149,8 @@ def main():
                 if square_rect.collidepoint(pos):
                     print("square pressed")
                     square_selected = not square_selected
+                    click_num=0
+                    rect_pos=[]
 
                 if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 30 and not square_selected:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
