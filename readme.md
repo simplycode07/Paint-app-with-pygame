@@ -16,4 +16,4 @@ To be honest nothing much
 - Pygame
 
 ## Example image
-- ![smiley face](example img.jpg)
+![smiley face](example img.jpg)
