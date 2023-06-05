@@ -16,4 +16,4 @@ To be honest nothing much
 - Pygame
 
 ## Example image
-![smiley face](example img.jpg)
+![smiley face](https://github.com/simplycode07/Paint-app-with-pygame/blob/master/example%20img.jpg)
