@@ -14,7 +14,7 @@ To be honest nothing much
 - Run the program by ```python main.py```
 - There are different buttons for different colors in the first row
 - In the second row there are two tools, for drawing circle and rectangle(for now)
-![toolbar](https://github.com/simplycode07/Paint-app-with-pygame/blob/master/img/app/toolbar.jpg)
+![toolbar](https://github.com/simplycode07/Paint-app-with-pygame/blob/master/img/app/toolbar.JPG)
 - To use any drawing tool: first select preferred color, then click on diagonally opposite vertices of the rectangle or diametrically opposite ends of circle
 ![circle and rectangles](https://github.com/simplycode07/Paint-app-with-pygame/blob/master/img/app/circle_and_rectangle.jpg)
 - Do Not try to click and drag that wont work
