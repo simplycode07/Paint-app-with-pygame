@@ -100,27 +100,6 @@ def main():
                 print("closing")
                 quit()
 
-            if True in tool_selected: #drawing with tools
-                if pygame.mouse.get_pressed() == (1, 0, 0) and click_num < 2 and pos[1] > 35:
-                    click_num += 1
-                    rect_pos.append(pos)
-                
-                if click_num==2:
-                    click_num=0
-                    first_corner = rect_pos[0] #--> (a,b)
-                    second_corner = rect_pos[1] #--> (c,d)
-
-                    if tool_selected[0]: # this draws rectangle
-                        left_x, left_y, w, h = draw_square(first_corner, second_corner)
-                        pygame.draw.rect(display, pen_color, pygame.Rect(left_x, left_y, w,h), size)
-
-                    if tool_selected[1]: # this draws circle
-                        center = (((first_corner[0]+second_corner[0])//2), ((first_corner[1]+second_corner[1])//2))#mid point formula basic shit
-                        radius = sqrt((center[0]-first_corner[0])**2 + (center[1]-first_corner[1])**2) # distance formula(pythagoras)
-                        pygame.draw.circle(display, pen_color, center, radius, size)
-
-                    rect_pos = []
-
             if keys[pygame.K_KP_PLUS] and size < 200: #changing size of pen
                 size += 1
             if keys[pygame.K_KP_MINUS] and size > 5:
@@ -148,7 +127,7 @@ def main():
 
                     display.blit(clear_butt_text, clear_butt_rect)
 
-                if not True in tool_selected:
+                if (not True in tool_selected) or True: # temporarily bypassing if statement for changing color while using tools
                     if color_button[0].collidepoint(pos):
                         pen_color = colors['black']
                     elif color_button[1].collidepoint(pos):
@@ -166,7 +145,7 @@ def main():
                     elif color_button[7].collidepoint(pos):
                         pen_color = colors['rand_col']
 
-                if square_rect.collidepoint(pos):
+                if square_rect.collidepoint(pos): # tool id = 0
                     print("click on the diagonally opposite ends of the rectangle you want to draw")                
                     for i in range(len(tool_selected)):
                         if i != 0:
@@ -180,7 +159,7 @@ def main():
                     else:
                         display.blit(square_selected_false, square_rect)
                     display.blit(circle_selected_false, circle_rect)
-                if circle_rect.collidepoint(pos):
+                if circle_rect.collidepoint(pos): # tool id = 1
                     print("click on diametrically opposite points of the circle you want to draw")
                     for i in range(len(tool_selected)):
                         if i != 1:
@@ -194,6 +173,29 @@ def main():
                     else:
                         display.blit(circle_selected_false, circle_rect)
                     display.blit(square_selected_false, square_rect)
+
+
+                # main drawing part
+                if True in tool_selected: # drawing with tools
+                    if pygame.mouse.get_pressed() == (1, 0, 0) and click_num < 2 and (pos[1]-size//2) > 35:
+                        click_num += 1
+                        rect_pos.append(pos)
+                    
+                    if click_num==2:
+                        click_num=0
+                        first_corner = rect_pos[0] #--> (a,b)
+                        second_corner = rect_pos[1] #--> (c,d)
+
+                        if tool_selected[0]: # this draws rectangle
+                            left_x, left_y, w, h = draw_square(first_corner, second_corner)
+                            pygame.draw.rect(display, pen_color, pygame.Rect(left_x, left_y, w,h), size)
+
+                        if tool_selected[1]: # this draws circle
+                            center = (((first_corner[0]+second_corner[0])//2), ((first_corner[1]+second_corner[1])//2))#mid point formula basic shit
+                            radius = sqrt((center[0]-first_corner[0])**2 + (center[1]-first_corner[1])**2) # distance formula(pythagoras)
+                            pygame.draw.circle(display, pen_color, center, radius, size)
+
+                        rect_pos = []
 
                 if (pos[1]-size//2) > 35 and not True in tool_selected:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
