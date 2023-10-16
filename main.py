@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import random
-
+import os
 from math import sqrt
 from datetime import datetime
 
@@ -12,7 +12,10 @@ display_size = (1000, 650)
 display = pygame.display.set_mode(display_size)
 pygame.display.set_caption("Painting App with pygame")
 clock = pygame.time.Clock()
-font = pygame.font.Font("C:\\Windows\\Fonts\\Arial.ttf", 18)
+font = pygame.font.Font("C://Windows//Fonts//Arial.ttf", 18)
+
+if os.name == 'posix':
+    font = pygame.font.Font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
 
 # colors
 colors = {
@@ -31,10 +34,10 @@ clear_butt_text = font.render("Clear screen", True, colors["black"], (255, 255, 
 clear_butt_rect = clear_butt_text.get_rect()
 clear_butt_rect.center = (900, 10)
 
-square_selected_true = pygame.image.load('img\\square_selected_true.png')
-square_selected_false = pygame.image.load('img\\square_selected_false.png')
-circle_selected_true = pygame.image.load('img\\circle_selected_true.png')
-circle_selected_false = pygame.image.load('img\\circle_selected_false.png')
+square_selected_true = pygame.image.load('img/square_selected_true.png')
+square_selected_false = pygame.image.load('img/square_selected_false.png')
+circle_selected_true = pygame.image.load('img/circle_selected_true.png')
+circle_selected_false = pygame.image.load('img/circle_selected_false.png')
 
 display.fill(colors["white"])
 
