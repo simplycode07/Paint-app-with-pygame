@@ -1,8 +1,7 @@
-import pygame
-import random
-import os
 from math import sqrt
 from datetime import datetime
+import pygame, pygame.gfxdraw
+import os, random
 
 pygame.init()
 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
@@ -68,6 +67,16 @@ def draw_square(first_corner, second_corner):
     w = abs(first_corner[0] - second_corner[0]) # width will be the difference of x coordinates of the two opposite points
     h = abs(first_corner[1] - second_corner[1]) # same thing with the height
     return left_x,left_y,w,h
+
+def pen_draw(pen_color, pos, prev_pos, display, size):
+    dist = sqrt((pos[0]-prev_pos[0])**2 + (pos[1]-prev_pos[1])**2)
+
+    if (dist > size*0.5):
+        pygame.draw.line(display, pen_color, ((prev_pos[0]), (prev_pos[1])), ((pos[0]), (pos[1])), width=size)
+        return
+
+    pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
+    
 
 def main():
     tool_id = 0
@@ -136,11 +145,6 @@ def main():
 
                 if square_rect.collidepoint(pos): # tool id = 0
                     print("click on the diagonally opposite ends of the rectangle you want to draw")                
-                    # for i in range(len(tool_selected)):
-                    #     if i != 0:
-                    #         tool_selected[i]=0
-                    #     else:
-                    #         tool_selected[i] = not tool_selected[i]
 
                     tool_id = 1 if tool_id != 1 else 0
                     rect_pos = []                    
@@ -150,6 +154,7 @@ def main():
                         display.blit(square_selected_false, square_rect)
 
                     display.blit(circle_selected_false, circle_rect)
+
                 if circle_rect.collidepoint(pos): # tool id = 1
                     print("click on diametrically opposite points of the circle you want to draw")
                     rect_pos = []
@@ -181,12 +186,14 @@ def main():
                         rect_pos = []
 
                 if (pos[1]-size//2) > canvas_start and tool_id == 0:
-                    pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
+                    pen_draw(pen_color, pos, prev_pos, display, size)
+                    # pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
+                    # pygame.draw.line(display, pen_color, ((prev_pos[0]-size//2), (prev_pos[1]-size//2)), ((pos[0]-size//2), (pos[1]-size//2)), width=size)
 
             if pygame.mouse.get_pressed() == (0, 0, 1):
                 if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 30:
-                    pygame.draw.rect(display, eraser_color, pygame.Rect(((pos[0]-size//2), (pos[1]-size//2), size, size)))
-                    # pygame.draw.line(display, pen_color, ((prev_pos[0]-size//2), (prev_pos[1]-size//2)), ((pos[0]-size//2), (pos[1]-size//2)), width=size)
+                    # pygame.draw.rect(display, eraser_color, pygame.Rect(((pos[0]-size//2), (pos[1]-size//2), size, size)))
+                    pygame.draw.line(display, eraser_color, ((prev_pos[0]-size//2), (prev_pos[1]-size//2)), ((pos[0]-size//2), (pos[1]-size//2)), width=size)
 
         pygame.display.update()
         clock.tick(240)
