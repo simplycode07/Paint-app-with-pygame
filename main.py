@@ -1,5 +1,4 @@
 import pygame
-from pygame.locals import *
 import random
 import os
 from math import sqrt
@@ -7,17 +6,20 @@ from datetime import datetime
 
 pygame.init()
 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_CROSSHAIR)
-# basic initialisation stuff
-display_size = (1000, 650)
+display_size = (1200, 850)
 display = pygame.display.set_mode(display_size)
 pygame.display.set_caption("Painting App with pygame")
 clock = pygame.time.Clock()
-font = pygame.font.Font("C://Windows//Fonts//Arial.ttf", 18)
+
+canvas_start = 35
+button_size = 10
+button_gap = 5
 
 if os.name == 'posix':
     font = pygame.font.Font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+else:
+    font = pygame.font.Font("C://Windows//Fonts//Arial.ttf", 18)
 
-# colors
 colors = {
     "white": (255, 255, 255),
     "black":(0,0,0),
@@ -41,13 +43,13 @@ circle_selected_false = pygame.image.load('img/circle_selected_false.png')
 
 display.fill(colors["white"])
 
-def save_image():
+def get_canvas_image():
     w = display_size[0]
-    h = display_size[1]-35 #canvas starts from (0,35)
-    rect = pygame.Rect(0, 35, w, h)
-    sub = display.subsurface(rect)
+    h = display_size[1]-canvas_start
+
+    canvas = pygame.Rect(0, canvas_start, w, h)
     screenshot = pygame.Surface((w, h))
-    screenshot.blit(sub, (0, 0))
+    screenshot.blit(display.subsurface(canvas), (0, 0))
     return screenshot
 
 def draw_square(first_corner, second_corner):
@@ -58,45 +60,40 @@ def draw_square(first_corner, second_corner):
 
     # note: first and second corners are diagonally opposite and so are third and fourth corners
     #did this because as from above the x value for all corners can either be a or c
-    if first_corner[0] < second_corner[0]:
-        left_x = first_corner[0]
-    else:
-        left_x = second_corner[0]
+    left_x = min(first_corner[0], second_corner[0])
 
     #similarly y values can either be b or d, so the left_top corner can be decided by taking least of a,b and c,d
-    if first_corner[1]<second_corner[1]:
-        left_y = first_corner[1]
-    else:
-        left_y = second_corner[1]
+    left_y = min(first_corner[1], second_corner[1])
 
     w = abs(first_corner[0] - second_corner[0]) # width will be the difference of x coordinates of the two opposite points
     h = abs(first_corner[1] - second_corner[1]) # same thing with the height
     return left_x,left_y,w,h
 
 def main():
-    tool_selected = [0,0]
-    click_num = 0
+    tool_id = 0
     size = 15
     pen_color = colors['black']
     eraser_color = colors['white']
     color_button = []
     rect_pos = []
     display.blit(clear_butt_text, clear_butt_rect)
-    colors_keys = [*colors]
 
     #this draws buttons for colors
-    for i in range(1,len(colors)):
-        color_button.append(pygame.Rect(((15*i)), 10, 10, 10))
-        pygame.draw.rect(display, colors[colors_keys[i]], pygame.Rect((15*i), 10, 10, 10))
+    for i in range(0,len(colors)):
+        color_button.append(pygame.Rect((button_size + button_gap)*(i), button_size, button_size, button_size))
+        pygame.draw.rect(display, [*colors.values()][i], color_button[i])
+
 
     #this draws the square tool, (15,25)
     square_rect = pygame.Rect(15, 25, 10, 10)
     circle_rect = pygame.Rect(30, 25, 10, 10)
     display.blit(square_selected_false, square_rect)
     display.blit(circle_selected_false, circle_rect)
+    pos = (0,0)
 
     while True:
         for event in pygame.event.get():
+            prev_pos = pos
             pos = pygame.mouse.get_pos()
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
@@ -107,71 +104,56 @@ def main():
                 size += 1
             if keys[pygame.K_KP_MINUS] and size > 5:
                 size -= 1
+
             if (keys[pygame.K_LCTRL] and keys[pygame.K_s]) or (keys[pygame.K_RCTRL] and keys[pygame.K_s]):
-                image = save_image()
+                image = get_canvas_image()
                 date = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
                 pygame.image.save(image, f"{date.lower()}-image.jpg")
 
             if pygame.mouse.get_pressed() == (1, 0, 0):
                 if clear_butt_rect.collidepoint(pos): #draws a white rectangle all over the screen and then redraws all the buttons
-                    pygame.draw.rect(display, colors['white'], pygame.Rect(0,0, display_size[0], display_size[1]))
-                    for i in range(1,len(colors)):
-                        pygame.draw.rect(display, colors[colors_keys[i]], pygame.Rect((15*i), 10, 10, 10))
+                    display.fill(colors["white"])
+                    for i in range(0, len(colors)):
+                        pygame.draw.rect(display, [*colors.values()][i], color_button[i])
 
-                    if tool_selected[0]:
+                    if tool_id == 1:
                         display.blit(square_selected_true, square_rect)
                     else:
                         display.blit(square_selected_false, square_rect)
                     
-                    if tool_selected[1]:
+                    if tool_id == 2:
                         display.blit(circle_selected_true, circle_rect)
                     else:
                         display.blit(circle_selected_false, circle_rect)
 
                     display.blit(clear_butt_text, clear_butt_rect)
 
-                if (not True in tool_selected) or True: # temporarily bypassing if statement for changing color while using tools
-                    if color_button[0].collidepoint(pos):
-                        pen_color = colors['black']
-                    elif color_button[1].collidepoint(pos):
-                        pen_color = colors['red']
-                    elif color_button[2].collidepoint(pos):
-                        pen_color = colors['green']
-                    elif color_button[3].collidepoint(pos):
-                        pen_color = colors['blue']
-                    elif color_button[4].collidepoint(pos):
-                        pen_color = colors['yellow']
-                    elif color_button[5].collidepoint(pos):
-                        pen_color = colors['cyan']
-                    elif color_button[6].collidepoint(pos):
-                        pen_color = colors['purple']
-                    elif color_button[7].collidepoint(pos):
-                        pen_color = colors['rand_col']
+                # checks if any color is pressed
+                for i in range(len(color_button)):
+                    if color_button[i].collidepoint(pos):
+                        pen_color = [*colors.values()][i]
+                        break
 
                 if square_rect.collidepoint(pos): # tool id = 0
                     print("click on the diagonally opposite ends of the rectangle you want to draw")                
-                    for i in range(len(tool_selected)):
-                        if i != 0:
-                            tool_selected[i]=0
-                        else:
-                            tool_selected[i] = not tool_selected[i]
-                    click_num = 0
+                    # for i in range(len(tool_selected)):
+                    #     if i != 0:
+                    #         tool_selected[i]=0
+                    #     else:
+                    #         tool_selected[i] = not tool_selected[i]
+
+                    tool_id = 1 if tool_id != 1 else 0
                     rect_pos = []                    
-                    if tool_selected[0]:
+                    if tool_id == 1:
                         display.blit(square_selected_true, square_rect)
                     else:
                         display.blit(square_selected_false, square_rect)
+
                     display.blit(circle_selected_false, circle_rect)
                 if circle_rect.collidepoint(pos): # tool id = 1
                     print("click on diametrically opposite points of the circle you want to draw")
-                    for i in range(len(tool_selected)):
-                        if i != 1:
-                            tool_selected[i] = 0
-                        else:
-                            tool_selected[i] = not tool_selected[i]
-                    click_num = 0
                     rect_pos = []
-                    if tool_selected[1]:
+                    if tool_id == 2:
                         display.blit(circle_selected_true, circle_rect)
                     else:
                         display.blit(circle_selected_false, circle_rect)
@@ -179,34 +161,32 @@ def main():
 
 
                 # main drawing part
-                if True in tool_selected: # drawing with tools
-                    if pygame.mouse.get_pressed() == (1, 0, 0) and click_num < 2 and (pos[1]-size//2) > 35:
-                        click_num += 1
+                if tool_id: # drawing with tools
+                    if len(rect_pos) < 2 and (pos[1]-size//2) > 35:
                         rect_pos.append(pos)
                     
-                    if click_num==2:
-                        click_num=0
+                    if len(rect_pos) == 2:
                         first_corner = rect_pos[0] #--> (a,b)
                         second_corner = rect_pos[1] #--> (c,d)
 
-                        if tool_selected[0]: # this draws rectangle
+                        if tool_id == 1: # this draws rectangle
                             left_x, left_y, w, h = draw_square(first_corner, second_corner)
                             pygame.draw.rect(display, pen_color, pygame.Rect(left_x, left_y, w,h), size)
 
-                        if tool_selected[1]: # this draws circle
+                        if tool_id == 2: # this draws circle
                             center = (((first_corner[0]+second_corner[0])//2), ((first_corner[1]+second_corner[1])//2))#mid point formula basic shit
                             radius = sqrt((center[0]-first_corner[0])**2 + (center[1]-first_corner[1])**2) # distance formula(pythagoras)
                             pygame.draw.circle(display, pen_color, center, radius, size)
 
                         rect_pos = []
 
-                if (pos[1]-size//2) > 35 and not True in tool_selected:
+                if (pos[1]-size//2) > canvas_start and tool_id == 0:
                     pygame.draw.rect(display, pen_color, pygame.Rect((pos[0]-size//2), (pos[1]-size//2), size, size))
 
             if pygame.mouse.get_pressed() == (0, 0, 1):
                 if (pos[1]-size//2) > 20 and (pos[0]-size//2) > 30:
-                    pygame.draw.rect(display, eraser_color, pygame.Rect(
-                        ((pos[0]-size//2), (pos[1]-size//2), size, size)))
+                    pygame.draw.rect(display, eraser_color, pygame.Rect(((pos[0]-size//2), (pos[1]-size//2), size, size)))
+                    # pygame.draw.line(display, pen_color, ((prev_pos[0]-size//2), (prev_pos[1]-size//2)), ((pos[0]-size//2), (pos[1]-size//2)), width=size)
 
         pygame.display.update()
         clock.tick(240)
