@@ -157,6 +157,7 @@ def main():
 
                 if circle_rect.collidepoint(pos): # tool id = 1
                     print("click on diametrically opposite points of the circle you want to draw")
+                    tool_id = 2 if tool_id != 2 else 0
                     rect_pos = []
                     if tool_id == 2:
                         display.blit(circle_selected_true, circle_rect)
