@@ -23,7 +23,10 @@ class Pen:
 
             if abs(dx) > self.size/2 or abs(dy) > self.size/2:
                 angle = atan(dy/dx) if dx else 0
+                # i wanted the size to vary between 1 and √2 from 0° to 45°
+                # i need a better method for this
                 adjusted_size = self.size * (1 + abs((sqrt(2)-1) * sin(2.0*angle)))
+
                 pygame.draw.line(canvas, self.color, self.positions[0], self.positions[1], int(adjusted_size))
 
             # this is to remove noise like texture in small lines
