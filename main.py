@@ -16,15 +16,23 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        if pygame.mouse.get_pressed() == (1, 0, 0):
+        mouse_state = pygame.mouse.get_pressed()
+
+        if mouse_state == (1, 0, 0):
             pos = list(pygame.mouse.get_pos())
             if pos[1] > settings.ui_height:
                 # because the surface starts from (0, ui_height) and the mouse input is with respect to origin of display 
                 pos[1] -= settings.ui_height
+
+                # adds position to input drawing buffer
                 pen.add(pos)
+
+        # clear input drawing buffer when mouse released
+        if mouse_state == (0, 0, 0):
+            pen.positions = []
 
     canvas = pen.refresh()
     display.blit(canvas, (0, settings.ui_height))
-    pygame.display.flip()
+    pygame.display.update()
 
 pygame.quit()
