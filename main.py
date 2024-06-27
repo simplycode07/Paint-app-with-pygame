@@ -1,15 +1,20 @@
 import pygame
 from src import settings, tools, colors
+from src.ui import UI
 
 pygame.init()
 
 display = pygame.display.set_mode(settings.resolution)
 pygame.display.set_caption("brr")
-pen = tools.Pen(colors.black, 15)
+
+pen = tools.Pen(colors["black"], 15)
+ui = UI()
 
 running = True
+current_tool = None
 
-display.fill(colors.white)
+display.fill(colors["white"])
+display.blit(ui.draw(), (0, 0))
 
 while running:
     for event in pygame.event.get():
@@ -26,6 +31,8 @@ while running:
 
                 # adds position to input drawing buffer
                 pen.add(pos)
+            else:
+                pen.color, current_tool = ui.onclick(pos, pen.color, current_tool)
 
         # clear input drawing buffer when mouse released
         if mouse_state == (0, 0, 0):

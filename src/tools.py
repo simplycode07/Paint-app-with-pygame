@@ -4,7 +4,7 @@ from math import atan, sin, pi, sqrt, modf
 
 
 canvas = pygame.Surface((settings.resolution[0], settings.resolution[1] - settings.ui_height))
-canvas.fill(colors.white)
+canvas.fill(colors["white"])
 
 class Pen:
     def __init__(self, color, size) -> None:
@@ -17,6 +17,12 @@ class Pen:
         print(self.positions)
 
     def refresh(self):
+        if len(self.positions) == 1:
+            rect_x = self.positions[0][0] - self.size//2
+            rect_y = self.positions[0][1] - self.size//2
+
+            pygame.draw.rect(canvas, self.color, pygame.Rect(rect_x, rect_y, self.size, self.size))
+
         while len(self.positions) > 1:
             dy = self.positions[0][1] - self.positions[1][1]
             dx = self.positions[0][0] - self.positions[1][0]
@@ -37,13 +43,6 @@ class Pen:
 
             self.positions.pop(0)
 
-        if len(self.positions) == 1:
-            rect_x = self.positions[0][0] - self.size//2
-            rect_y = self.positions[0][1] - self.size//2
 
-            pygame.draw.rect(canvas, self.color, pygame.Rect(rect_x, rect_y, self.size, self.size))
-
-
-        
         return canvas
 
