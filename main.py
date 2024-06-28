@@ -1,5 +1,5 @@
 import pygame
-from src import settings, tools, colors
+from src import settings, canvas, colors
 from src.ui import UI
 
 pygame.init()
@@ -7,8 +7,8 @@ pygame.init()
 display = pygame.display.set_mode(settings.resolution)
 pygame.display.set_caption("brr")
 
-pen = tools.Pen(colors["black"], 15)
-ui = UI()
+pen = canvas.Pen(colors["black"], 15)
+ui = UI([pen])
 
 running = True
 current_tool = None
@@ -23,23 +23,29 @@ while running:
 
         mouse_state = pygame.mouse.get_pressed()
 
-        if mouse_state == (1, 0, 0):
+        if mouse_state[0] ^ mouse_state[2]:
             pos = list(pygame.mouse.get_pos())
+
+            # if click is in drawing area
             if pos[1] > settings.ui_height:
                 # because the surface starts from (0, ui_height) and the mouse input is with respect to origin of display 
                 pos[1] -= settings.ui_height
-
-                # adds position to input drawing buffer
                 pen.add(pos)
+
             else:
-                pen.color, current_tool = ui.onclick(pos, pen.color, current_tool)
+                pen.color, current_tool = ui.check_input(pos, pen.color, current_tool, canvas)
+
+        if mouse_state == (1, 0, 0):
+            display.blit(pen.refresh(), (0, settings.ui_height))
+
+        if mouse_state == (0, 0, 1):
+            display.blit(pen.refresh(colors["white"]), (0, settings.ui_height))
+
 
         # clear input drawing buffer when mouse released
         if mouse_state == (0, 0, 0):
             pen.positions = []
 
-    canvas = pen.refresh()
-    display.blit(canvas, (0, settings.ui_height))
     pygame.display.update()
 
 pygame.quit()
