@@ -39,9 +39,6 @@ class UI:
 
             self.tool_buttons_rect.append(button_rect)
 
-        # self.clear_button_rect = pygame.Rect(settings.resolution[0] - (settings.large_butt_width + settings.large_butt_gap), settings.ui_start, settings.large_butt_width, settings.large_butt_height)
-        
-
     def clear(self):
         print("clearing")
         self.canvas.fill(colors["white"])
@@ -50,17 +47,13 @@ class UI:
     def check_input(self, pos, canvas):
         for button in self.color_buttons:
             if button.rect.collidepoint(pos):
-                self.tool_manager.color = button.color
+                self.tool_manager.update_color(button.color)
                 print(button.color, self.tool_manager.color)
-                # return (button.color, tool)
         
         if self.clear_button_rect.collidepoint(pos):
             self.clear()
             self.draw()
             canvas.clear()
-
-        # return (color, tool)
-        # return (color, tool_id)
 
     def draw(self, current_tool=None):
         for button in self.color_buttons:

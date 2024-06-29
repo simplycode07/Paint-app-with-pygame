@@ -9,7 +9,7 @@ pygame.display.set_caption("brr")
 
 # tools = [canvas.Pen(colors["black"], settings.default_size), canvas.Square(colors["black"], settings.default_size)]
 tool_manager = canvas.ToolManager(colors["black"], 15)
-current_tool = 0
+tool_manager.tool_id = 1
 
 ui = UI(tool_manager)
 
@@ -29,22 +29,16 @@ while running:
 
         pos = list(pygame.mouse.get_pos())
 
-        # if click is in drawing area
+        # if mouse is in drawing area
         if pos[1] > settings.ui_height:
             # because the surface starts from (0, ui_height) and the mouse input is with respect to origin of display 
             pos[1] -= settings.ui_height
-            tool_manager.onclick(pos, mouse_state)
+            tool_manager.input(pos, mouse_state)
 
         elif mouse_state[0]:
             ui.check_input(pos, canvas)
 
-        # if mouse_state == (1, 0, 0):
-        #     display.blit(tools[0].refresh(), (0, settings.ui_height))
-        #
-        # if mouse_state == (0, 0, 1):
-        #     display.blit(tools[0].refresh(), (0, settings.ui_height))
-
-    display.blit(tool_manager.onrefresh(mouse_state), (0, settings.ui_height))
+    display.blit(tool_manager.draw(), (0, settings.ui_height))
 
     pygame.display.update()
 
