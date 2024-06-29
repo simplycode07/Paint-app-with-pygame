@@ -48,7 +48,6 @@ class UI:
         for button in self.color_buttons:
             if button.rect.collidepoint(pos):
                 self.tool_manager.update_color(button.color)
-                print(button.color, self.tool_manager.color)
         
         if self.clear_button_rect.collidepoint(pos):
             self.clear()
@@ -57,7 +56,6 @@ class UI:
 
     def draw(self, current_tool=None):
         for button in self.color_buttons:
-            print(f"drawing {button.rect.x}")
             pygame.draw.rect(self.canvas, button.color, button.rect)
 
         self.canvas.blit(self.clear_button_text, self.clear_button_rect)

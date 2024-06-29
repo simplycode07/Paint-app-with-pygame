@@ -14,7 +14,7 @@ class ToolManager:
         self.size = size
 
         self.tool_id = 0
-        self.tools = [Pen(color, size), Rect(color, size)]
+        self.tools = [Pen(color, size), Rect(color, size), Circle(color, size)]
     
     # make a manager for tools which handles input and returns surface when refresh is called
     def input(self, pos, mouse_state):
@@ -27,18 +27,19 @@ class ToolManager:
             elif mouse_state == (0, 0, 0):
                 self.tools[0].positions = []
 
-        if self.tool_id == 1:
-            if mouse_state[0] and len(self.tools[1].positions) == 0:
-                self.tools[1].positions.append(pos)
+        if self.tool_id == 1 or self.tool_id == 2:
+            if mouse_state[0] and len(self.tools[self.tool_id].positions) == 0:
+                self.tools[self.tool_id].positions.append(pos)
 
-            if mouse_state[0] and len(self.tools[1].positions):
-                self.tools[1].show(pos)
+            if mouse_state[0] and len(self.tools[self.tool_id].positions):
+                self.tools[self.tool_id].show(pos)
 
-            if mouse_state[0] == 0 and len(self.tools[1].positions) == 1:
-                self.tools[1].positions = []
+            # dont draw anything and clear position if the mouse did not move
+            if mouse_state[0] == 0 and len(self.tools[self.tool_id].positions) == 1:
+                self.tools[self.tool_id].positions = []
 
-            if mouse_state[0] == 0 and len(self.tools[1].positions) == 2:
-                self.tools[1].draw()
+            if mouse_state[0] == 0 and len(self.tools[self.tool_id].positions) == 2:
+                self.tools[self.tool_id].draw()
 
     def draw(self):
         if self.tool_id == 0:
@@ -107,7 +108,7 @@ class Rect:
     # this will render the square but without actually changing the drawing_area
     def show(self, pos):
         # first time rectangle is rendered
-        if len(self.positions) == 1:
+        if len(self.positions) == 1 and self.positions[0] != pos:
             # create copy of original drawing area
             self.old_drawing_area.blit(drawing_area, (0, 0))
             self.positions.append(pos)
@@ -117,10 +118,10 @@ class Rect:
             # restore drawing_area from the copy we created
             drawing_area.blit(self.old_drawing_area, (0, 0))
             self.positions[1] = pos
-        else:
-            print("i did a fucky wucky")
 
-        print(self.positions)
+        # exit if there is only 1 element in self.positions
+        # or position has not changed
+        else: return
 
         rect = pygame.Rect(*self.change_form(*self.positions))
         pygame.draw.rect(drawing_area, self.color, rect, self.size)
@@ -148,6 +149,42 @@ class Rect:
         return (left_x, top_y, width, height)
 
 
-        
+class Circle:
+    def __init__(self, color, size) -> None:
+        self.color = color
+        self.size = size
 
+        self.positions = []
+
+        self.old_drawing_area = pygame.Surface(drawing_area.get_size())
+
+    def show(self, pos):
+        # first time rectangle is rendered
+        if len(self.positions) == 1 and self.positions[0] != pos:
+            # create copy of original drawing area
+            self.old_drawing_area.blit(drawing_area, (0, 0))
+            self.positions.append(pos)
+
+        # replace second position if it exists
+        elif len(self.positions) == 2:
+            # restore drawing_area from the copy we created
+            drawing_area.blit(self.old_drawing_area, (0, 0))
+            self.positions[1] = pos
+
+        # exit if there is only 1 element in self.positions
+        # or position has not changed
+        else: return
+
+        center, radius = self.change_form(*self.positions)
+        pygame.draw.circle(drawing_area, self.color, center, radius, self.size)
+    
+    def draw(self):
+        self.positions = []
+        self.old_drawing_area.blit(drawing_area, (0, 0))
+
+    def change_form(self, point1, point2):
+        center = (((point1[0]+point2[0])//2), ((point1[1]+point2[1])//2))#mid point formula basic shit
+        radius = sqrt((center[0]-point1[0])**2 + (center[1]-point1[1])**2) # distance formula(pythagoras)
+
+        return center, radius
 

@@ -9,7 +9,7 @@ pygame.display.set_caption("brr")
 
 # tools = [canvas.Pen(colors["black"], settings.default_size), canvas.Square(colors["black"], settings.default_size)]
 tool_manager = canvas.ToolManager(colors["black"], 15)
-tool_manager.tool_id = 1
+tool_manager.tool_id = 0
 
 ui = UI(tool_manager)
 
@@ -25,8 +25,16 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        mouse_state = pygame.mouse.get_pressed()
+        # temporary until i figure out how i should display images of tools and selected tools
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_1:
+                tool_manager.tool_id = 0
+            if event.key == pygame.K_2:
+                tool_manager.tool_id = 1
+            if event.key == pygame.K_3:
+                tool_manager.tool_id = 2
 
+        mouse_state = pygame.mouse.get_pressed()
         pos = list(pygame.mouse.get_pos())
 
         # if mouse is in drawing area
