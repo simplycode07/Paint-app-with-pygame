@@ -1,5 +1,7 @@
 # Paint App made with pygame (I haven't named it yet)
 
+https://github.com/simplycode07/Paint-app-with-pygame/assets/72332741/3d718225-b3c0-4a7e-b3bd-1da7c5e55c1a
+
 ## Worst painting app ever!!
 It's a really basic and one of the worst painting app ever created
 
