@@ -31,10 +31,13 @@ while running:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_1]:
             tool_manager.tool_id = 0
+            redraw_ui = True
         if keys[pygame.K_2]:
             tool_manager.tool_id = 1
+            redraw_ui = True
         if keys[pygame.K_3]:
             tool_manager.tool_id = 2
+            redraw_ui = True
 
         if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_s]:
             canvas.save_image()
