@@ -15,3 +15,4 @@ large_butt_gap = 10
 default_size = 15
 min_size = 5
 max_size = 50
+size_step = 1

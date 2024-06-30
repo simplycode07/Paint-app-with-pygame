@@ -43,20 +43,36 @@ class UI:
         print("clearing")
         self.canvas.fill(colors["white"])
 
-    # check input
+    # returns if ui is to be redrawn or not
     def check_input(self, pos, canvas):
         for button in self.color_buttons:
             if button.rect.collidepoint(pos):
                 self.tool_manager.update_color(button.color)
         
+        for i, button_rect in enumerate(self.tool_buttons_rect):
+            if button_rect.collidepoint(pos):
+                self.tool_manager.tool_id = i
+                self.clear()
+                self.draw()
+
+                return True
+
         if self.clear_button_rect.collidepoint(pos):
             self.clear()
             self.draw()
             canvas.clear()
+            
+            return True
+        
+        return False
 
     def draw(self, current_tool=None):
         for button in self.color_buttons:
             pygame.draw.rect(self.canvas, button.color, button.rect)
+
+        for i, button_rect in enumerate(self.tool_buttons_rect):
+            image = self.tool_manager.get_image(i)
+            self.canvas.blit(pygame.transform.scale(image, button_rect.size), button_rect)
 
         self.canvas.blit(self.clear_button_text, self.clear_button_rect)
 

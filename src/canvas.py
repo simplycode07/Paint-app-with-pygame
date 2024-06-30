@@ -1,9 +1,15 @@
 import pygame
 from . import settings, colors
 from math import atan, sin, sqrt
+from datetime import datetime
 
 drawing_area = pygame.Surface((settings.resolution[0], settings.resolution[1] - settings.ui_height))
 drawing_area.fill(colors["white"])
+
+def save_image():
+    date = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
+    pygame.image.save(drawing_area, f"{date.lower()}-image.jpg")
+    print(f"image saved as - {date.lower()}-image.jpg")
 
 def clear():
     drawing_area.fill(colors["white"])
@@ -55,11 +61,19 @@ class ToolManager:
         self.size = size
         for tool in self.tools: tool.size = size
 
+    def get_image(self, tool_id):
+        if tool_id == self.tool_id:
+            return self.tools[tool_id].image[1]
+        else:
+            return self.tools[tool_id].image[0]
+
 class Pen:
     def __init__(self, color, size) -> None:
         self.color = color
         self.size = size
         self.positions = []
+
+        self.image = [pygame.image.load("img/pen.png"), pygame.image.load("img/pen_selected.png")]
 
     def add(self, pos, color=None):
         if not color: color = self.color
@@ -100,12 +114,14 @@ class Rect:
     def __init__(self, color, size) -> None:
         self.color = color
         self.size = size
+
+        self.image = [pygame.image.load("img/rect.png"), pygame.image.load("img/rect_selected.png")]
         
         self.positions = []
 
         self.old_drawing_area = pygame.Surface(drawing_area.get_size())
 
-    # this will render the square but without actually changing the drawing_area
+    # this will render the rect but without actually changing the drawing_area
     def show(self, pos):
         # first time rectangle is rendered
         if len(self.positions) == 1 and self.positions[0] != pos:
@@ -153,6 +169,8 @@ class Circle:
     def __init__(self, color, size) -> None:
         self.color = color
         self.size = size
+
+        self.image = [pygame.image.load("img/circle.png"), pygame.image.load("img/circle_selected.png")]
 
         self.positions = []
 
