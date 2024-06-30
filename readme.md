@@ -13,15 +13,13 @@ To be honest nothing much
 ## How To Use
 - Run the program by ```python main.py```
 - There are different buttons for different colors in the first row
-- In the second row there are two tools, for drawing circle and rectangle(for now)
+- In the second row there are three tools, for drawing with pen, rectangle tool and circle tool
 ![toolbar](img/app/toolbar.png)
-- To use any drawing tool: first select preferred color, then click on diagonally opposite vertices of the rectangle or diametrically opposite ends of circle
+- To use any drawing tool: first select preferred color, drag from diametrically opposite ends
 ![circle and rectangles](img/app/circle_and_rectangle.jpg)
-- Do Not try to click and drag that wont work
 - Press ctrl+s to save the drawn image
-- Click on Numpad +/- to change size of pen
+- Click on =/- to change size of pen
 
-
-## Example image
+## Example images
 ![smiley face](img/app/example1.jpg)
 ![O face](img/app/example2.jpg)
