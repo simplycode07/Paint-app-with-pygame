@@ -8,8 +8,7 @@ display = pygame.display.set_mode(settings.resolution)
 pygame.display.set_caption("brr")
 clock = pygame.time.Clock()
 
-# tools = [canvas.Pen(colors["black"], settings.default_size), canvas.Square(colors["black"], settings.default_size)]
-tool_manager = canvas.ToolManager(colors["black"], 15)
+tool_manager = canvas.ToolManager(colors["black"], settings.default_size)
 tool_manager.tool_id = 0
 
 ui = UI(tool_manager)

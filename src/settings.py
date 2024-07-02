@@ -12,7 +12,7 @@ large_butt_gap = 10
 
 
 # Drawing
-default_size = 15
-min_size = 5
+default_size = 5
+min_size = 1
 max_size = 50
 size_step = 1
