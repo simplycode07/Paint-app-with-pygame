@@ -8,6 +8,14 @@ if os.name == 'posix':
 else:
     font = pygame.font.Font("C://Windows//Fonts//Arial.ttf", 18)
 
+def inverse_color(color):
+    inv_color = [0, 0, 0]
+    
+    for i in range(3):
+        inv_color[i] = 255 - color[i]
+
+    return tuple(inv_color)
+
 class UI:
     def __init__(self, tool_manager):
         # canvas is the surface where the ui will be drawn to when draw() is called
@@ -15,6 +23,9 @@ class UI:
         self.clear()
 
         self.tool_manager = tool_manager
+
+        # color at 1 is black
+        self.selected_color_id = 1
 
         self.clear_button_text = font.render("Clear screen", True, colors["black"], (230, 230, 230))
         self.clear_button_rect = self.clear_button_text.get_rect()
@@ -45,9 +56,14 @@ class UI:
 
     # returns if ui is to be redrawn or not
     def check_input(self, pos, canvas):
-        for button in self.color_buttons:
+        for i, button in enumerate(self.color_buttons):
             if button.rect.collidepoint(pos):
+                self.selected_color_id = i
                 self.tool_manager.update_color(button.color)
+                self.clear()
+                self.draw()
+
+                return True
         
         for i, button_rect in enumerate(self.tool_buttons_rect):
             if button_rect.collidepoint(pos):
@@ -67,7 +83,17 @@ class UI:
         return False
 
     def draw(self, current_tool=None):
-        for button in self.color_buttons:
+        for i, button in enumerate(self.color_buttons):
+            # increase size of buttons when selected
+            if i == self.selected_color_id:
+                rect = button.rect.copy()
+                rect.width += settings.color_standout_px 
+                rect.height += settings.color_standout_px 
+                
+                rect.center = button.rect.center
+
+                pygame.draw.rect(self.canvas, button.color, rect)
+
             pygame.draw.rect(self.canvas, button.color, button.rect)
 
         for i, button_rect in enumerate(self.tool_buttons_rect):

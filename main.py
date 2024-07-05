@@ -20,9 +20,8 @@ display.blit(ui.draw(), (0, 0))
 
 mouse_state = (0, 0, 0)
 
-redraw_ui = False
-
 while running:
+    redraw_ui = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False

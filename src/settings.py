@@ -10,6 +10,9 @@ large_butt_width = 15
 large_butt_height = 15
 large_butt_gap = 10
 
+# this is increased size of color buttons when selected
+# should be multiple of 2
+color_standout_px = 6
 
 # Drawing
 default_size = 5
