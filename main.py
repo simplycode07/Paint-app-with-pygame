@@ -20,7 +20,7 @@ display.blit(ui.draw(), (0, 0))
 
 mouse_state = (0, 0, 0)
 
-tool_shortcuts = [pygame.K_1, pygame.K_2, pygame.K_3]
+tool_shortcuts = [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4]
 
 while running:
     redraw_ui = False
