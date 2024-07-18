@@ -20,6 +20,8 @@ display.blit(ui.draw(), (0, 0))
 
 mouse_state = (0, 0, 0)
 
+tool_shortcuts = [pygame.K_1, pygame.K_2, pygame.K_3]
+
 while running:
     redraw_ui = False
     for event in pygame.event.get():
@@ -27,15 +29,11 @@ while running:
             running = False
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_1]:
-            tool_manager.tool_id = 0
-            redraw_ui = True
-        if keys[pygame.K_2]:
-            tool_manager.tool_id = 1
-            redraw_ui = True
-        if keys[pygame.K_3]:
-            tool_manager.tool_id = 2
-            redraw_ui = True
+        
+        for tool_id, shortcut_key in enumerate(tool_shortcuts):
+            if keys[shortcut_key]:
+                tool_manager.tool_id = tool_id
+                redraw_ui = True
 
         if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_s]:
             canvas.save_image()
