@@ -1,4 +1,5 @@
 import pygame
+from collections import deque
 from math import atan, sqrt, sin
 from . import settings, colors
 
@@ -143,5 +144,52 @@ class Circle:
         radius = sqrt((center[0]-point1[0])**2 + (center[1]-point1[1])**2) # distance formula(pythagoras)
 
         return center, radius
+
+class Fill:
+    def __init__(self, color, size):
+        self.color = color
+        self.size = size
+
+        self.image = [pygame.image.load("img/fill.png"), pygame.image.load("img/fill_selected.png")]
+
+    def draw(self, old_color, seed_position):
+        if seed_position[0] < 0 or seed_position[0] > settings.resolution[0]:
+            return drawing_area
+        if seed_position[1] < 0 or seed_position[1] > (settings.resolution[1] - settings.ui_height):
+            return drawing_area
+
+        print("filling area")
+
+        current_color = drawing_area.get_at(seed_position)
+        if current_color == self.color:
+            return drawing_area
+
+        queue = deque([seed_position])
+
+        while queue:
+            x, y = queue.popleft()
+            current_color = drawing_area.get_at((x, y))
+
+            if current_color != old_color or current_color == self.color:
+                continue
+
+            drawing_area.set_at((x, y), self.color)
+
+            if x > 0:
+                queue.append((x - 1, y))
+            if x < settings.resolution[0] - 1:
+                queue.append((x + 1, y))
+            if y > 0:
+                queue.append((x, y - 1))
+            if y < settings.resolution[1] - settings.ui_height - 1:
+                queue.append((x, y + 1))
+        #
+        # if current_color == old_color:
+        #     drawing_area.set_at(seed_position, self.color)
+        #     # drawing_area.blit(self.color, (seed_position, (1, 1)))
+        #     self.draw(old_color, (seed_position[0] - 1, seed_position[1]))
+        #     self.draw(old_color, (seed_position[0] + 1, seed_position[1]))
+        #     self.draw(old_color, (seed_position[0], seed_position[1] - 1))
+        #     self.draw(old_color, (seed_position[0], seed_position[1] + 1))
 
 
