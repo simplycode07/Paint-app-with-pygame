@@ -1,14 +1,15 @@
-# Paint App made with pygame (I haven't named it yet)
+# PygPaint 
+Drawing application made with pygame
 
 https://github.com/simplycode07/Paint-app-with-pygame/assets/72332741/3d718225-b3c0-4a7e-b3bd-1da7c5e55c1a
 
-## Worst painting app ever!!
+## Worst painting app ever!! (probably but atleast it works)
 It's a really basic and one of the worst painting app ever created
 
 ## Features
-To be honest nothing much
+To be honest nothing much but
 - You can Create really bad images with it
-- You can Save images you have created
+- You can Save "masterpieces" that you have created
 - Added tool to draw rectangles and circles
 - Fill Area
 - but it comes with a color palette with 7 colors and a random color which is generated when program starts
@@ -25,4 +26,5 @@ To be honest nothing much
 
 ## Example images
 ![smiley face](img/app/example1.jpg)
+![Abstract Art](img/app/example3.jpg)
 ![O face](img/app/example2.jpg)
