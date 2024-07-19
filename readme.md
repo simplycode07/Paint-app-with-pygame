@@ -10,6 +10,7 @@ To be honest nothing much
 - You can Create really bad images with it
 - You can Save images you have created
 - Added tool to draw rectangles and circles
+- Fill Area
 - but it comes with a color palette with 7 colors and a random color which is generated when program starts
 
 ## How To Use
