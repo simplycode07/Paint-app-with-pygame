@@ -4,7 +4,7 @@ from . import colors, settings
 
 pygame.init()
 if os.name == 'posix':
-    font = pygame.font.Font("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+    font = pygame.font.Font("/usr/share/fonts/TTF/DejaVuSans.ttf", 18)
 else:
     font = pygame.font.Font("C://Windows//Fonts//Arial.ttf", 18)
 
