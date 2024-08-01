@@ -1,10 +1,17 @@
 import pygame
+
 from collections import deque
 from math import atan, sqrt, sin
-from . import settings, colors
 
-drawing_area = pygame.Surface((settings.resolution[0], settings.resolution[1] - settings.ui_height))
+from . import settings, colors
+from .undo import TimeLine
+
+drawing_area = pygame.Surface(
+    (settings.resolution[0], settings.resolution[1] - settings.ui_height))
 drawing_area.fill(colors["white"])
+
+timeline = TimeLine()
+
 
 class Pen:
     def __init__(self, color, size) -> None:
@@ -12,21 +19,34 @@ class Pen:
         self.size = size
         self.positions = []
 
-        self.image = [pygame.image.load("img/pen.png"), pygame.image.load("img/pen_selected.png")]
+        self.image = [pygame.image.load(
+            "img/pen.png"), pygame.image.load("img/pen_selected.png")]
 
     def add(self, pos, color=None):
-        if not color: color = self.color
+        if not color:
+            color = self.color
 
         self.positions.append((pos, color))
 
     def refresh(self):
+        if len(self.positions) == 0:
+            self.prev_drawing_area = None
+
         if len(self.positions) == 1:
             # self.positions is list of tuple(list, tuple)
             #                                [x, y], color
+
             rect_x = self.positions[0][0][0] - self.size//2
             rect_y = self.positions[0][0][1] - self.size//2
 
-            pygame.draw.rect(drawing_area, self.positions[0][1], pygame.Rect(rect_x, rect_y, self.size, self.size))
+            if self.prev_drawing_area == None:
+                self.prev_drawing_area = drawing_area.copy()
+
+            change_rect = pygame.Rect(rect_x, rect_y, self.size, self.size)
+            change_rect = change_rect.clip(drawing_area.get_rect())
+            timeline.append(drawing_area, change_rect, 0)
+
+            pygame.draw.rect(drawing_area, self.positions[0][1], change_rect)
 
         while len(self.positions) > 1:
             dy = self.positions[0][0][1] - self.positions[1][0][1]
@@ -36,26 +56,31 @@ class Pen:
                 angle = atan(dy/dx) if dx else 0
                 # i wanted the size to vary between 1 and √2 from 0° to 45°
                 # i need a better method for this, lerp maybe?
-                adjusted_size = self.size * (1 + abs((sqrt(2)-1) * sin(2.0*angle)))
+                adjusted_size = self.size * \
+                    (1 + abs((sqrt(2)-1) * sin(2.0*angle)))
 
-                pygame.draw.line(drawing_area, self.positions[0][1], self.positions[0][0], self.positions[1][0], int(adjusted_size))
+                pygame.draw.line(
+                    drawing_area, self.positions[0][1], self.positions[0][0], self.positions[1][0], int(adjusted_size))
 
             # this is to remove noise like texture in small lines
             else:
                 rect_x = self.positions[0][0][0] - self.size//2
                 rect_y = self.positions[0][0][1] - self.size//2
-                pygame.draw.rect(drawing_area, self.positions[0][1], pygame.Rect(rect_x, rect_y, self.size, self.size))
+                pygame.draw.rect(drawing_area, self.positions[0][1], pygame.Rect(
+                    rect_x, rect_y, self.size, self.size))
 
             self.positions.pop(0)
         return drawing_area
+
 
 class Rect:
     def __init__(self, color, size) -> None:
         self.color = color
         self.size = size
 
-        self.image = [pygame.image.load("img/rect.png"), pygame.image.load("img/rect_selected.png")]
-        
+        self.image = [pygame.image.load(
+            "img/rect.png"), pygame.image.load("img/rect_selected.png")]
+
         self.positions = []
 
         self.old_drawing_area = pygame.Surface(drawing_area.get_size())
@@ -76,15 +101,16 @@ class Rect:
 
         # exit if there is only 1 element in self.positions
         # or position has not changed
-        else: return
+        else:
+            return
 
         rect = pygame.Rect(*self.change_form(*self.positions))
         pygame.draw.rect(drawing_area, self.color, rect, self.size)
-    
+
     def draw(self):
         self.positions = []
         self.old_drawing_area.blit(drawing_area, (0, 0))
-    
+
     def change_form(self, point1, point2):
         # first_corner --> (a,b)
         # second_corner --> (c,d)
@@ -92,14 +118,14 @@ class Rect:
         # fourth_corner = (second_corner[0], first_corner[1]) -->(c,b)
 
         # note: first and second corners are diagonally opposite and so are third and fourth corners
-        #did this because as from above the x value for all corners can either be a or c
+        # did this because as from above the x value for all corners can either be a or c
         left_x = min(point1[0], point2[0])
 
-        #similarly y values can either be b or d, so the left_top corner can be decided by taking least of a,b and c,d
+        # similarly y values can either be b or d, so the left_top corner can be decided by taking least of a,b and c,d
         top_y = min(point1[1], point2[1])
 
-        width = abs(point1[0] - point2[0]) 
-        height = abs(point1[1] - point2[1]) 
+        width = abs(point1[0] - point2[0])
+        height = abs(point1[1] - point2[1])
 
         return (left_x, top_y, width, height)
 
@@ -109,7 +135,8 @@ class Circle:
         self.color = color
         self.size = size
 
-        self.image = [pygame.image.load("img/circle.png"), pygame.image.load("img/circle_selected.png")]
+        self.image = [pygame.image.load(
+            "img/circle.png"), pygame.image.load("img/circle_selected.png")]
 
         self.positions = []
 
@@ -130,27 +157,32 @@ class Circle:
 
         # exit if there is only 1 element in self.positions
         # or position has not changed
-        else: return
+        else:
+            return
 
         center, radius = self.change_form(*self.positions)
         pygame.draw.circle(drawing_area, self.color, center, radius, self.size)
-    
+
     def draw(self):
         self.positions = []
         self.old_drawing_area.blit(drawing_area, (0, 0))
 
     def change_form(self, point1, point2):
-        center = (((point1[0]+point2[0])//2), ((point1[1]+point2[1])//2))#mid point formula basic shit
-        radius = sqrt((center[0]-point1[0])**2 + (center[1]-point1[1])**2) # distance formula(pythagoras)
+        # mid point formula basic shit
+        center = (((point1[0]+point2[0])//2), ((point1[1]+point2[1])//2))
+        # distance formula(pythagoras)
+        radius = sqrt((center[0]-point1[0])**2 + (center[1]-point1[1])**2)
 
         return center, radius
+
 
 class Fill:
     def __init__(self, color, size):
         self.color = color
         self.size = size
 
-        self.image = [pygame.image.load("img/fill.png"), pygame.image.load("img/fill_selected.png")]
+        self.image = [pygame.image.load(
+            "img/fill.png"), pygame.image.load("img/fill_selected.png")]
 
     def draw(self, old_color, seed_position):
         if seed_position[0] < 0 or seed_position[0] > settings.resolution[0]:
@@ -191,5 +223,3 @@ class Fill:
         #     self.draw(old_color, (seed_position[0] + 1, seed_position[1]))
         #     self.draw(old_color, (seed_position[0], seed_position[1] - 1))
         #     self.draw(old_color, (seed_position[0], seed_position[1] + 1))
-
-

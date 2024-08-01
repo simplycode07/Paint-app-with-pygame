@@ -2,7 +2,7 @@ import pygame
 from . import colors
 from datetime import datetime
 
-from .tools import drawing_area, Pen, Rect, Circle, Fill
+from .tools import drawing_area, timeline, Pen, Rect, Circle, Fill
 
 def save_image():
     date = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
@@ -55,6 +55,12 @@ class ToolManager:
             self.tools[0].refresh()
 
         return drawing_area
+
+    def undo(self):
+        timeline.undo(drawing_area)
+
+    def redo(self):
+        timeline.redo(drawing_area)
 
     def update_color(self, color):
         self.color = color

@@ -38,6 +38,12 @@ while running:
         if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_s]:
             canvas.save_image()
 
+        if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_z]:
+            tool_manager.undo()
+
+        if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_y]:
+            tool_manager.redo()
+
         if keys[pygame.K_EQUALS] and tool_manager.size < settings.max_size:
             print("increasing size")
             tool_manager.update_size(tool_manager.size + settings.size_step)
