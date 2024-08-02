@@ -108,6 +108,9 @@ class Rect:
         pygame.draw.rect(drawing_area, self.color, rect, self.size)
 
     def draw(self):
+        rect = pygame.Rect(*self.change_form(*self.positions))
+        timeline.append(self.old_drawing_area, rect, 1)
+
         self.positions = []
         self.old_drawing_area.blit(drawing_area, (0, 0))
 
@@ -164,6 +167,12 @@ class Circle:
         pygame.draw.circle(drawing_area, self.color, center, radius, self.size)
 
     def draw(self):
+        center, radius = self.change_form(*self.positions)
+        rect = pygame.Rect(center[0]-radius, center[1]-radius, 2*radius + 1, 2*radius + 1)
+
+        rect = rect.clip(drawing_area.get_rect())
+        timeline.append(self.old_drawing_area, rect, 1)
+
         self.positions = []
         self.old_drawing_area.blit(drawing_area, (0, 0))
 

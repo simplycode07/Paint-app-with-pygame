@@ -65,11 +65,11 @@ class Event:
             surface = pygame.Surface(size)
             surface.blit(drawing_area.subsurface(rect), (0, 0))
 
-        for i, sub_event in enumerate(self.sub_events):
-            print(f"undoing at {i}")
+        for sub_event in reversed(self.sub_events):
             drawing_area.blit(sub_event["surface"], sub_event["coordinate"])
 
 
+    # gotta work on it
     def redo(self, drawing_area):
         for i, sub_event in enumerate(self.sub_events):
             print(f"redoing at {i}")
