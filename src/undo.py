@@ -9,7 +9,12 @@ class TimeLine:
 
     def append(self, drawing_area, change_rect, tool_id):
         surface = pygame.Surface(change_rect.size)
-        surface.blit(drawing_area.subsurface(change_rect), (0, 0))
+
+        if tool_id != 3:
+            surface.blit(drawing_area.subsurface(change_rect), (0, 0))
+        else:
+            surface.blit(drawing_area, (0, 0))
+
         coordinate = change_rect.topleft
         
         print(f"len: {len(self.timeline)}, time: {self.current_time}")
@@ -63,7 +68,12 @@ class Event:
 
             rect = pygame.Rect(*size, *coordinate)
             surface = pygame.Surface(size)
-            surface.blit(drawing_area.subsurface(rect), (0, 0))
+
+            if self.tool_id != 3:
+                surface.blit(drawing_area.subsurface(rect), (0, 0))
+
+            else:
+                surface.blit(drawing_area, (0, 0))
 
         for sub_event in reversed(self.sub_events):
             drawing_area.blit(sub_event["surface"], sub_event["coordinate"])

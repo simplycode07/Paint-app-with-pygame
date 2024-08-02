@@ -171,7 +171,7 @@ class Circle:
         rect = pygame.Rect(center[0]-radius, center[1]-radius, 2*radius + 1, 2*radius + 1)
 
         rect = rect.clip(drawing_area.get_rect())
-        timeline.append(self.old_drawing_area, rect, 1)
+        timeline.append(self.old_drawing_area, rect, 2)
 
         self.positions = []
         self.old_drawing_area.blit(drawing_area, (0, 0))
@@ -200,6 +200,9 @@ class Fill:
             return drawing_area
 
         print("filling area")
+
+        rect = pygame.Rect(0, 0, *settings.resolution)
+        timeline.append(drawing_area, rect, 3)
 
         current_color = drawing_area.get_at(seed_position)
         if current_color == self.color:
