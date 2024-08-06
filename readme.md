@@ -1,7 +1,9 @@
 # PygPaint 
 Drawing application made with pygame
 
-https://github.com/simplycode07/Paint-app-with-pygame/assets/72332741/3d718225-b3c0-4a7e-b3bd-1da7c5e55c1a
+
+https://github.com/user-attachments/assets/c514051a-d1d2-486b-83d8-9b189c7a3520
+
 
 ## Worst painting app ever!! (probably but atleast it works)
 It's a really basic and one of the worst painting app ever created
