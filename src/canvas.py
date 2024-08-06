@@ -4,14 +4,17 @@ from datetime import datetime
 
 from .tools import drawing_area, timeline, Pen, Rect, Circle, Fill
 
+
 def save_image():
     date = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
     pygame.image.save(drawing_area, f"{date.lower()}-image.jpg")
     print(f"image saved as - {date.lower()}-image.jpg")
 
+
 def clear():
     drawing_area.fill(colors["white"])
     timeline.reset()
+
 
 class ToolManager:
     def __init__(self, color, size):
@@ -19,8 +22,9 @@ class ToolManager:
         self.size = size
 
         self.tool_id = 0
-        self.tools = [Pen(color, size), Rect(color, size), Circle(color, size), Fill(color, size)]
-    
+        self.tools = [Pen(color, size), Rect(color, size),
+                      Circle(color, size), Fill(color, size)]
+
     # make a manager for tools which handles input and returns surface when refresh is called
     def input(self, pos, mouse_state):
         if self.tool_id == 0:
@@ -31,6 +35,7 @@ class ToolManager:
 
             elif mouse_state == (0, 0, 0):
                 self.tools[0].positions = []
+                timeline.end_stroke()
 
         if self.tool_id == 1 or self.tool_id == 2:
             if mouse_state[0] and len(self.tools[self.tool_id].positions) == 0:
@@ -65,15 +70,16 @@ class ToolManager:
 
     def update_color(self, color):
         self.color = color
-        for tool in self.tools: tool.color = color
+        for tool in self.tools:
+            tool.color = color
 
     def update_size(self, size):
         self.size = size
-        for tool in self.tools: tool.size = size
+        for tool in self.tools:
+            tool.size = size
 
     def get_image(self, tool_id):
         if tool_id == self.tool_id:
             return self.tools[tool_id].image[1]
         else:
             return self.tools[tool_id].image[0]
-

@@ -26,7 +26,14 @@ class TimeLine:
 
         if len(self.timeline):
             last_event = self.timeline[-1]
-            if tool_id == 0 and last_event.tool_id == 0:
+            if tool_id == 0 and last_event.tool_id == 0 and not last_event.stroke_end:
+                last_event.add_subevent(surface, coordinate)
+                return
+
+            last_event_coordinates = last_event.sub_events[-1]["coordinate"]
+            last_event_surface_size = last_event.sub_events[-1]["surface"].get_size(
+            )
+            if last_event_coordinates == coordinate and last_event_surface_size == surface.get_size():
                 last_event.add_subevent(surface, coordinate)
                 return
 
@@ -48,6 +55,17 @@ class TimeLine:
         else:
             print("Cannot perform redo")
 
+    def get_last_event(self):
+        if len(self.timeline):
+            return self.timeline[-1]
+        else:
+            return None
+
+    def end_stroke(self):
+        last_event = self.get_last_event()
+        if last_event:
+            last_event.stroke_end = True
+
     def reset(self):
         self.timeline = []
         self.current_time = 0
@@ -57,6 +75,7 @@ class Event:
     def __init__(self, surface, coordinate, tool_id):
         self.sub_events = [{"surface": surface, "coordinate": coordinate}]
         self.tool_id = tool_id
+        self.stroke_end = False
 
     def add_subevent(self, surface, coordinate):
         if self.sub_events[-1]["coordinate"] == coordinate and self.sub_events[-1]["surface"].get_size() == surface.get_size():
@@ -87,6 +106,5 @@ class Event:
 
     def redo(self, drawing_area):
         for i, sub_event in enumerate(self.sub_events):
-            print(f"redoing at {i}")
             drawing_area.blit(
                 sub_event["surface"], sub_event["coordinate"])

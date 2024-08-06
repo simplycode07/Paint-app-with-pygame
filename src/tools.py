@@ -18,6 +18,7 @@ class Pen:
         self.color = color
         self.size = size
         self.positions = []
+        self.stroke_end = False
 
         self.image = [pygame.image.load(
             "img/pen.png"), pygame.image.load("img/pen_selected.png")]
@@ -29,18 +30,12 @@ class Pen:
         self.positions.append((pos, color))
 
     def refresh(self):
-        if len(self.positions) == 0:
-            self.prev_drawing_area = None
-
         if len(self.positions) == 1:
             # self.positions is list of tuple(list, tuple)
             #                                [x, y], color
 
             rect_x = self.positions[0][0][0] - self.size//2
             rect_y = self.positions[0][0][1] - self.size//2
-
-            if self.prev_drawing_area == None:
-                self.prev_drawing_area = drawing_area.copy()
 
             change_rect = pygame.Rect(rect_x, rect_y, self.size, self.size)
             timeline.append(drawing_area, change_rect, 0)
@@ -58,7 +53,8 @@ class Pen:
                 adjusted_size = self.size * \
                     (1 + abs((sqrt(2)-1) * sin(2.0*angle)))
 
-                change_rect = pygame.Rect(*self.change_form(self.positions[0][0], self.positions[1][0], adjusted_size))
+                change_rect = pygame.Rect(
+                    *self.change_form(self.positions[0][0], self.positions[1][0], adjusted_size))
                 timeline.append(drawing_area, change_rect, 0)
 
                 pygame.draw.line(
@@ -77,7 +73,9 @@ class Pen:
                 pygame.draw.rect(drawing_area, self.positions[0][1], pygame.Rect(
                     rect_x, rect_y, self.size, self.size))
 
+            self.stroke_end = False
             self.positions.pop(0)
+
         return drawing_area
 
     def change_form(self, point1, point2, adjusted_size):
@@ -88,6 +86,7 @@ class Pen:
         height = abs(point1[1] - point2[1]) + adjusted_size + 1
 
         return (left_x, top_y, width, height)
+
 
 class Rect:
     def __init__(self, color, size) -> None:
@@ -184,7 +183,8 @@ class Circle:
 
     def draw(self):
         center, radius = self.change_form(*self.positions)
-        rect = pygame.Rect(center[0]-radius, center[1]-radius, 2*radius + 1, 2*radius + 1)
+        rect = pygame.Rect(center[0]-radius, center[1] -
+                           radius, 2*radius + 1, 2*radius + 1)
 
         timeline.append(self.old_drawing_area, rect, 2)
 
@@ -213,8 +213,6 @@ class Fill:
             return drawing_area
         if seed_position[1] < 0 or seed_position[1] > (settings.resolution[1] - settings.ui_height):
             return drawing_area
-
-        print("filling area")
 
         rect = pygame.Rect(0, 0, *settings.resolution)
         timeline.append(drawing_area, rect, 3)
