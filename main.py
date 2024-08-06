@@ -29,34 +29,44 @@ while running:
             running = False
 
         keys = pygame.key.get_pressed()
-        
+        mod = pygame.key.get_mods()
+
         for tool_id, shortcut_key in enumerate(tool_shortcuts):
             if keys[shortcut_key]:
                 tool_manager.tool_id = tool_id
                 redraw_ui = True
 
-        if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_s]:
-            canvas.save_image()
+        if event.type == pygame.KEYDOWN:
+            for tool_id, shortcut_key in enumerate(tool_shortcuts):
+                if event.key == shortcut_key:
+                    tool_manager.tool_id = tool_id
+                    redraw_ui = True
 
-        if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_z]:
-            tool_manager.undo()
+            if event.key == pygame.K_EQUALS and tool_manager.size < settings.max_size:
+                print("increasing size")
+                tool_manager.update_size(
+                    tool_manager.size + settings.size_step)
 
-        if (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]) and keys[pygame.K_y]:
-            tool_manager.redo()
+            if event.key == pygame.K_MINUS and tool_manager.size > settings.min_size:
+                tool_manager.update_size(
+                    tool_manager.size - settings.size_step)
 
-        if keys[pygame.K_EQUALS] and tool_manager.size < settings.max_size:
-            print("increasing size")
-            tool_manager.update_size(tool_manager.size + settings.size_step)
-
-        if keys[pygame.K_MINUS] and tool_manager.size > settings.min_size:
-            tool_manager.update_size(tool_manager.size - settings.size_step)
+            # event with ctrl modifier
+            if event.mod & pygame.KMOD_CTRL:
+                if event.key == pygame.K_s:
+                    canvas.save_image()
+                if event.key == pygame.K_z:
+                    tool_manager.undo()
+                if event.key == pygame.K_y:
+                    print("not implemented yet")
+                    # tool_manager.redo()
 
         mouse_state = pygame.mouse.get_pressed()
         pos = list(pygame.mouse.get_pos())
 
         # if mouse is in drawing area
         if pos[1] > settings.ui_height:
-            # because the surface starts from (0, ui_height) and the mouse input is with respect to origin of display 
+            # because the surface starts from (0, ui_height) and the mouse input is with respect to origin of display
             pos[1] -= settings.ui_height
             tool_manager.input(pos, mouse_state)
 

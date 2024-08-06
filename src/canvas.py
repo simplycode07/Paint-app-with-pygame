@@ -11,6 +11,7 @@ def save_image():
 
 def clear():
     drawing_area.fill(colors["white"])
+    timeline.reset()
 
 class ToolManager:
     def __init__(self, color, size):
