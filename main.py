@@ -58,8 +58,7 @@ while running:
                 if event.key == pygame.K_z:
                     tool_manager.undo()
                 if event.key == pygame.K_y:
-                    print("not implemented yet")
-                    # tool_manager.redo()
+                    tool_manager.redo()
 
         mouse_state = pygame.mouse.get_pressed()
         pos = list(pygame.mouse.get_pos())

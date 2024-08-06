@@ -1,4 +1,5 @@
 import pygame
+from . import colors
 # from . import settings
 
 
@@ -30,8 +31,8 @@ class TimeLine:
                 last_event.add_subevent(surface, coordinate)
                 return
 
-            last_event_coordinates = last_event.sub_events[-1]["coordinate"]
-            last_event_surface_size = last_event.sub_events[-1]["surface"].get_size(
+            last_event_coordinates = last_event.rev_sub_events[-1]["coordinate"]
+            last_event_surface_size = last_event.rev_sub_events[-1]["surface"].get_size(
             )
             if last_event_coordinates == coordinate and last_event_surface_size == surface.get_size():
                 last_event.add_subevent(surface, coordinate)
@@ -73,24 +74,23 @@ class TimeLine:
 
 class Event:
     def __init__(self, surface, coordinate, tool_id):
-        self.sub_events = [{"surface": surface, "coordinate": coordinate}]
+        self.rev_sub_events = [{"surface": surface, "coordinate": coordinate}]
+        self.forw_sub_events = []
         self.tool_id = tool_id
         self.stroke_end = False
 
     def add_subevent(self, surface, coordinate):
-        if self.sub_events[-1]["coordinate"] == coordinate and self.sub_events[-1]["surface"].get_size() == surface.get_size():
-            return
-        print(f"subevent: {len(self.sub_events)}")
-        self.sub_events.append({"surface": surface, "coordinate": coordinate})
+        print(f"subevent: {len(self.rev_sub_events)}")
+        self.rev_sub_events.append({"surface": surface, "coordinate": coordinate})
 
     def undo(self, drawing_area):
         # add current state to timeline
         # gotta work on it
-        for sub_event in self.sub_events:
-            size = sub_event["surface"].get_size()
-            coordinate = sub_event["coordinate"]
+        for rev_sub_event in reversed(self.rev_sub_events):
+            size = rev_sub_event["surface"].get_size()
+            coordinate = rev_sub_event["coordinate"]
 
-            rect = pygame.Rect(*size, *coordinate)
+            rect = pygame.Rect(*coordinate, *size)
             surface = pygame.Surface(size)
 
             if self.tool_id != 3:
@@ -98,13 +98,15 @@ class Event:
 
             else:
                 surface.blit(drawing_area, (0, 0))
+            
+            self.forw_sub_events.append({"surface":surface, "coordinate":coordinate})
 
-        for sub_event in reversed(self.sub_events):
-            drawing_area.blit(sub_event["surface"], sub_event["coordinate"])
+        for rev_sub_event in reversed(self.rev_sub_events):
+            drawing_area.blit(rev_sub_event["surface"], rev_sub_event["coordinate"])
 
     # gotta work on it
 
     def redo(self, drawing_area):
-        for i, sub_event in enumerate(self.sub_events):
+        for forw_sub_event in self.forw_sub_events:
             drawing_area.blit(
-                sub_event["surface"], sub_event["coordinate"])
+                forw_sub_event["surface"], forw_sub_event["coordinate"])

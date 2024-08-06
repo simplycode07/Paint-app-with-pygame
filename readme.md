@@ -17,7 +17,7 @@ To be honest nothing much but
 - You can Save "masterpieces" that you have created
 - Added tool to draw rectangles and circles
 - Fill Area
-- Timeline to Undo or Redo (only undo works for now)
+- Timeline to Undo and Redo 
 - but it comes with a color palette with 7 colors and a random color which is generated when program starts
 
 ## How To Use
