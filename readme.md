@@ -3,9 +3,8 @@ Drawing application made with pygame
 
 
 
-https://github.com/user-attachments/assets/b29e35a6-8aee-41cb-b408-733366e42244
 
-
+https://github.com/user-attachments/assets/5ee65f01-0d79-4368-acbb-e6cf0a899089
 
 
 ## Worst painting app ever!! (probably but atleast it works)
