@@ -32,9 +32,10 @@ class TimeLine:
                 return
 
             last_event_coordinates = last_event.rev_sub_events[-1]["coordinate"]
-            last_event_surface_size = last_event.rev_sub_events[-1]["surface"].get_size(
-            )
-            if last_event_coordinates == coordinate and last_event_surface_size == surface.get_size():
+            last_event_surface_size = last_event.rev_sub_events[-1]["surface"].get_size()
+
+            # checking tool id because fill tool always has same coordinates and surface size
+            if tool_id != 3 and last_event_coordinates == coordinate and last_event_surface_size == surface.get_size():
                 last_event.add_subevent(surface, coordinate)
                 return
 
@@ -81,6 +82,9 @@ class Event:
 
     def add_subevent(self, surface, coordinate):
         print(f"subevent: {len(self.rev_sub_events)}")
+        last_sub_event = self.rev_sub_events[-1]
+        if last_sub_event["coordinate"] == coordinate and last_sub_event["surface"].get_size() == surface.get_size():
+            return
         self.rev_sub_events.append({"surface": surface, "coordinate": coordinate})
 
     def undo(self, drawing_area):

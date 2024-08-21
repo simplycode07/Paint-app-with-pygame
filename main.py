@@ -4,6 +4,7 @@ from src.ui import UI
 
 pygame.init()
 
+# display = pygame.display.set_mode(settings.resolution, pygame.RESIZABLE)
 display = pygame.display.set_mode(settings.resolution)
 pygame.display.set_caption("brr")
 clock = pygame.time.Clock()
@@ -77,6 +78,6 @@ while running:
 
     display.blit(tool_manager.draw(), (0, settings.ui_height))
     pygame.display.update()
-    clock.tick(240)
+    clock.tick(60)
 
 pygame.quit()

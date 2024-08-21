@@ -7,12 +7,12 @@ from .tools import drawing_area, timeline, Pen, Rect, Circle, Fill
 
 def save_image():
     date = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
-    pygame.image.save(drawing_area, f"{date.lower()}-image.jpg")
+    pygame.image.save(drawing_area.area, f"{date.lower()}-image.jpg")
     print(f"image saved as - {date.lower()}-image.jpg")
 
 
 def clear():
-    drawing_area.fill(colors["white"])
+    drawing_area.area.fill(colors["white"])
     timeline.reset()
 
 
@@ -53,20 +53,20 @@ class ToolManager:
 
         if self.tool_id == 3:
             if mouse_state[0]:
-                old_color = drawing_area.get_at(pos)
+                old_color = drawing_area.area.get_at(pos)
                 self.tools[3].draw(old_color, pos)
 
     def draw(self):
         if self.tool_id == 0:
             self.tools[0].refresh()
 
-        return drawing_area
+        return drawing_area.area
 
     def undo(self):
-        timeline.undo(drawing_area)
+        timeline.undo(drawing_area.area)
 
     def redo(self):
-        timeline.redo(drawing_area)
+        timeline.redo(drawing_area.area)
 
     def update_color(self, color):
         self.color = color
