@@ -31,7 +31,6 @@ while running:
             running = False
 
         if event.type == pygame.VIDEORESIZE:
-            print("resized")
             ui.resized(*event.dict["size"])
             drawing_area.resized(*event.dict["size"])
             redraw_ui = True
