@@ -2,7 +2,7 @@ import pygame
 from . import colors
 from datetime import datetime
 
-from .tools import drawing_area, timeline, Pen, Rect, Circle, Fill
+from .tools import *
 
 
 def save_image():
