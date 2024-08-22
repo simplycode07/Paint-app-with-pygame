@@ -2,8 +2,6 @@
 Drawing application made with pygame
 
 
-
-
 https://github.com/user-attachments/assets/5ee65f01-0d79-4368-acbb-e6cf0a899089
 
 
@@ -17,6 +15,7 @@ To be honest nothing much but
 - Added tool to draw rectangles and circles
 - Fill Area
 - Timeline to Undo and Redo 
+- Resizable Window
 - but it comes with a color palette with 7 colors and a random color which is generated when program starts
 
 ## How To Use
