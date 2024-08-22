@@ -19,7 +19,9 @@ def inverse_color(color):
 class UI:
     def __init__(self, tool_manager):
         # canvas is the surface where the ui will be drawn to when draw() is called
-        self.canvas = pygame.Surface((settings.resolution[0], settings.ui_height))
+        self.width = settings.resolution[0]
+        self.height = settings.ui_height
+        self.canvas = pygame.Surface((self.width, self.height))
         self.clear()
 
         self.tool_manager = tool_manager
@@ -28,27 +30,18 @@ class UI:
         self.selected_color_id = 1
 
         self.clear_button_text = font.render("Clear screen", True, colors["black"], (230, 230, 230))
-        self.clear_button_rect = self.clear_button_text.get_rect()
-        self.clear_button_rect.topright = (settings.resolution[0] - (settings.large_butt_gap), 10)
         
-        # self.clear_button_rect = pygame.Rect(1000, 10, 40, 30)
+        self.place_buttons()
 
-        # this will store all the colors
-        self.color_buttons = []
-        for i in range(len(colors)):
-            start_x = (settings.small_butt_size + settings.small_butt_gap)*i
-            start_y = settings.ui_start
-            button_rect = pygame.Rect(start_x, start_y, settings.small_butt_size, settings.small_butt_size)
 
-            self.color_buttons.append(ColorButton([*colors.values()][i], button_rect))
-        
-        self.tool_buttons_rect = []
-        for i in range(len(self.tool_manager.tools)):
-            start_x = (settings.small_butt_size + settings.small_butt_gap) * (i+1)
-            start_y = settings.ui_start + settings.small_butt_size + settings.small_butt_gap
-            button_rect = pygame.Rect(start_x, start_y, settings.small_butt_size, settings.small_butt_size)
-
-            self.tool_buttons_rect.append(button_rect)
+    def resized(self, new_width, new_height):
+        self.width = new_width
+        self.height = new_height
+        self.canvas = pygame.Surface((self.width, self.height))
+    
+        self.clear()
+        self.place_buttons()
+        self.draw()
 
     def clear(self):
         print("clearing")
@@ -82,7 +75,7 @@ class UI:
         
         return False
 
-    def draw(self, current_tool=None):
+    def draw(self):
         for i, button in enumerate(self.color_buttons):
             # increase size of buttons when selected
             if i == self.selected_color_id:
@@ -104,6 +97,28 @@ class UI:
 
         return self.canvas
 
+    def place_buttons(self):
+        self.clear_button_rect = self.clear_button_text.get_rect()
+        self.clear_button_rect.topright = (self.width - (settings.large_butt_gap), 10)
+        
+        # self.clear_button_rect = pygame.Rect(1000, 10, 40, 30)
+
+        # this will store all the colors
+        self.color_buttons = []
+        for i in range(len(colors)):
+            start_x = (settings.small_butt_size + settings.small_butt_gap)*i
+            start_y = settings.ui_start
+            button_rect = pygame.Rect(start_x, start_y, settings.small_butt_size, settings.small_butt_size)
+
+            self.color_buttons.append(ColorButton([*colors.values()][i], button_rect))
+        
+        self.tool_buttons_rect = []
+        for i in range(len(self.tool_manager.tools)):
+            start_x = (settings.small_butt_size + settings.small_butt_gap) * (i+1)
+            start_y = settings.ui_start + settings.small_butt_size + settings.small_butt_gap
+            button_rect = pygame.Rect(start_x, start_y, settings.small_butt_size, settings.small_butt_size)
+
+            self.tool_buttons_rect.append(button_rect)
 
 class ColorButton:
     def __init__(self, color, rect):

@@ -15,16 +15,17 @@ class DrawingArea:
         self.width = settings.resolution[0]
         self.height = settings.resolution[1] - settings.ui_height
 
-    def resize(self, new_width, new_height):
+    def resized(self, new_width, new_height):
+        old_area = self.area
         self.area = pygame.Surface(
             (new_width, new_height))
         self.area.fill(colors["white"])
+        self.area.blit(old_area, (0, 0))
 
         self.width = new_width
         self.height = new_height
 
 drawing_area = DrawingArea()
-
 timeline = TimeLine()
 
 class Pen:
@@ -112,12 +113,11 @@ class Rect:
 
         self.positions = []
 
-        self.old_drawing_area = pygame.Surface(drawing_area.area.get_size())
-
     # this will render the rect but without actually changing the drawing_area
     def show(self, pos):
         # first time rectangle is rendered
         if len(self.positions) == 1 and self.positions[0] != pos:
+            self.old_drawing_area = pygame.Surface(drawing_area.area.get_size())
             # create copy of original drawing area
             self.old_drawing_area.blit(drawing_area.area, (0, 0))
             self.positions.append(pos)
@@ -172,11 +172,10 @@ class Circle:
 
         self.positions = []
 
-        self.old_drawing_area = pygame.Surface(drawing_area.area.get_size())
-
     def show(self, pos):
         # first time rectangle is rendered
         if len(self.positions) == 1 and self.positions[0] != pos:
+            self.old_drawing_area = pygame.Surface(drawing_area.area.get_size())
             # create copy of original drawing area
             self.old_drawing_area.blit(drawing_area.area, (0, 0))
             self.positions.append(pos)
@@ -223,9 +222,9 @@ class Fill:
             "img/fill.png"), pygame.image.load("img/fill_selected.png")]
 
     def draw(self, old_color, seed_position):
-        if seed_position[0] < 0 or seed_position[0] > settings.resolution[0]:
+        if seed_position[0] < 0 or seed_position[0] > drawing_area.width:
             return drawing_area.area
-        if seed_position[1] < 0 or seed_position[1] > (settings.resolution[1] - settings.ui_height):
+        if seed_position[1] < 0 or seed_position[1] > drawing_area.height:
             return drawing_area.area
 
         current_color = drawing_area.area.get_at(seed_position)
@@ -233,7 +232,7 @@ class Fill:
             return drawing_area.area
 
         queue = deque([seed_position])
-        rect = pygame.Rect(0, 0, *settings.resolution)
+        rect = pygame.Rect(0, 0, drawing_area.width, drawing_area.height)
         timeline.append(drawing_area.area, rect, 3)
 
         while queue:
@@ -247,11 +246,11 @@ class Fill:
 
             if x > 0:
                 queue.append((x - 1, y))
-            if x < settings.resolution[0] - 1:
+            if x < drawing_area.width - 1:
                 queue.append((x + 1, y))
             if y > 0:
                 queue.append((x, y - 1))
-            if y < settings.resolution[1] - settings.ui_height - 1:
+            if y < drawing_area.height - 1:
                 queue.append((x, y + 1))
 
 

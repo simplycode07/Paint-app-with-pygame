@@ -19,8 +19,6 @@ class TimeLine:
 
         coordinate = change_rect.topleft
 
-        print(f"len: {len(self.timeline)}, time: {self.current_time}")
-
         if self.current_time < len(self.timeline):
             for _ in range(self.current_time, len(self.timeline)):
                 self.timeline.pop(-1)
@@ -81,7 +79,6 @@ class Event:
         self.stroke_end = False
 
     def add_subevent(self, surface, coordinate):
-        print(f"subevent: {len(self.rev_sub_events)}")
         last_sub_event = self.rev_sub_events[-1]
         if last_sub_event["coordinate"] == coordinate and last_sub_event["surface"].get_size() == surface.get_size():
             return
@@ -96,14 +93,20 @@ class Event:
 
             rect = pygame.Rect(*coordinate, *size)
             surface = pygame.Surface(size)
+            surface.fill(colors["white"])
 
             if self.tool_id != 3:
-                surface.blit(drawing_area.subsurface(rect), (0, 0))
+                if drawing_area.get_rect().collidepoint(rect.topleft):
+                    rect = rect.clip(drawing_area.get_rect())
+                    surface.blit(drawing_area.subsurface(rect), (0, 0))
+                    # self.forw_sub_events.append({"surface":surface, "coordinate":coordinate})
 
             else:
                 surface.blit(drawing_area, (0, 0))
-            
+                # self.forw_sub_events.append({"surface":surface, "coordinate":coordinate})
+
             self.forw_sub_events.append({"surface":surface, "coordinate":coordinate})
+            
 
         for rev_sub_event in reversed(self.rev_sub_events):
             drawing_area.blit(rev_sub_event["surface"], rev_sub_event["coordinate"])

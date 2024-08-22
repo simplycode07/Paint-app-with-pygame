@@ -1,11 +1,12 @@
 import pygame
 from src import settings, canvas, colors
 from src.ui import UI
+from src.tools import drawing_area
 
 pygame.init()
 
-# display = pygame.display.set_mode(settings.resolution, pygame.RESIZABLE)
-display = pygame.display.set_mode(settings.resolution)
+display = pygame.display.set_mode(settings.resolution, pygame.RESIZABLE)
+# display = pygame.display.set_mode(settings.resolution)
 pygame.display.set_caption("brr")
 clock = pygame.time.Clock()
 
@@ -29,18 +30,26 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        if event.type == pygame.VIDEORESIZE:
+            print("resized")
+            ui.resized(*event.dict["size"])
+            drawing_area.resized(*event.dict["size"])
+            redraw_ui = True
+
         keys = pygame.key.get_pressed()
         mod = pygame.key.get_mods()
 
         for tool_id, shortcut_key in enumerate(tool_shortcuts):
             if keys[shortcut_key]:
                 tool_manager.tool_id = tool_id
+                ui.draw()
                 redraw_ui = True
 
         if event.type == pygame.KEYDOWN:
             for tool_id, shortcut_key in enumerate(tool_shortcuts):
                 if event.key == shortcut_key:
                     tool_manager.tool_id = tool_id
+                    ui.draw()
                     redraw_ui = True
 
             if event.key == pygame.K_EQUALS and tool_manager.size < settings.max_size:
@@ -71,10 +80,11 @@ while running:
             tool_manager.input(pos, mouse_state)
 
         elif mouse_state[0]:
+            ui.draw()
             redraw_ui = ui.check_input(pos, canvas)
 
     if redraw_ui:
-        display.blit(ui.draw(), (0, 0))
+        display.blit(ui.canvas, (0, 0))
 
     display.blit(tool_manager.draw(), (0, settings.ui_height))
     pygame.display.update()
