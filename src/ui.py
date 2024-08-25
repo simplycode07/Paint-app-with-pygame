@@ -60,7 +60,7 @@ class UI:
         
         for i, button_rect in enumerate(self.tool_buttons_rect):
             if button_rect.collidepoint(pos):
-                self.tool_manager.tool_id = i
+                self.tool_manager.change_tool(i)
                 self.clear()
                 self.draw()
 

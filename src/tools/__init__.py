@@ -30,5 +30,6 @@ from .pen import Pen
 from .rect import Rect
 from .circle import Circle
 from .fill import Fill
+from .selection_window import Image
 
-__all__ = ['Pen', 'Rect', 'Circle', 'Fill', 'drawing_area', 'timeline']
+__all__ = ['Pen', 'Rect', 'Circle', 'Fill', 'drawing_area', 'timeline', 'Image']

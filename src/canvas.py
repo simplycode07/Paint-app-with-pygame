@@ -1,4 +1,5 @@
 import pygame
+
 from . import colors
 from datetime import datetime
 
@@ -23,7 +24,7 @@ class ToolManager:
 
         self.tool_id = 0
         self.tools = [Pen(color, size), Rect(color, size),
-                      Circle(color, size), Fill(color, size)]
+                      Circle(color, size), Fill(color, size), Image()]
 
     # make a manager for tools which handles input and returns surface when refresh is called
     def input(self, pos, mouse_state):
@@ -56,6 +57,10 @@ class ToolManager:
                 old_color = drawing_area.area.get_at(pos)
                 self.tools[3].draw(old_color, pos)
 
+        if self.tool_id == 4:
+            if mouse_state[0] and not self.tools[4].img:
+                self.tools[4].start()
+
     def draw(self):
         if self.tool_id == 0:
             self.tools[0].refresh()
@@ -83,3 +88,6 @@ class ToolManager:
             return self.tools[tool_id].image[1]
         else:
             return self.tools[tool_id].image[0]
+
+    def change_tool(self, new_tool_id):
+        self.tool_id = new_tool_id

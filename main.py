@@ -47,7 +47,7 @@ while running:
         if event.type == pygame.KEYDOWN:
             for tool_id, shortcut_key in enumerate(tool_shortcuts):
                 if event.key == shortcut_key:
-                    tool_manager.tool_id = tool_id
+                    tool_manager.change_tool(tool_id)
                     ui.draw()
                     redraw_ui = True
 
