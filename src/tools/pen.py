@@ -1,5 +1,5 @@
 import pygame
-from math import atan, sqrt, sin
+from math import atan, pi, sqrt, sin, cos
 
 from . import drawing_area, timeline
 
@@ -38,10 +38,8 @@ class Pen:
 
             if abs(dx) > self.size/2 or abs(dy) > self.size/2:
                 angle = atan(dy/dx) if dx else 0
-                # i wanted the size to vary between 1 and √2 from 0° to 45°
-                # i need a better method for this, lerp maybe?
-                adjusted_size = self.size * \
-                    (1 + abs((sqrt(2)-1) * sin(2.0*angle)))
+                
+                adjusted_size = self.size * cos(pi/4 - abs(angle)) * sqrt(2)
 
                 change_rect = pygame.Rect(
                     *self.change_form(self.positions[0][0], self.positions[1][0], adjusted_size))
