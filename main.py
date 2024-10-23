@@ -3,6 +3,8 @@ from src import settings, canvas, colors
 from src.ui import UI
 from src.tools import drawing_area
 
+from src.file_selector import choose_file
+
 pygame.init()
 
 display = pygame.display.set_mode(settings.resolution, pygame.RESIZABLE)
@@ -24,6 +26,7 @@ mouse_state = (0, 0, 0)
 
 tool_shortcuts = [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4]
 
+counter = 0
 while running:
     redraw_ui = False
     for event in pygame.event.get():
@@ -50,6 +53,9 @@ while running:
                     tool_manager.change_tool(tool_id)
                     ui.draw()
                     redraw_ui = True
+
+                if event.key == pygame.K_l:
+                    print(choose_file())
 
             if event.key == pygame.K_EQUALS and tool_manager.size < settings.max_size:
                 print("increasing size")
@@ -85,8 +91,14 @@ while running:
     if redraw_ui:
         display.blit(ui.canvas, (0, 0))
 
-    display.blit(tool_manager.draw(), (0, settings.ui_height))
-    pygame.display.update()
-    clock.tick(60)
+    if counter == settings.display_update_rate:
+        counter = 1
+        display.blit(tool_manager.draw(), (0, settings.ui_height))
+        pygame.display.update()
+
+    clock.tick(120)
+    counter += 1
 
 pygame.quit()
+
+
